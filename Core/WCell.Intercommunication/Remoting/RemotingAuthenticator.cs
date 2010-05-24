@@ -11,10 +11,8 @@ namespace WCell.Intercommunication.Remoting
     public sealed class RemotingAuthenticator : IAuthorizeRemotingConnection
     {
         public delegate bool ConnectingEndPointAuthenticationHandler(EndPoint endPoint);
-        public delegate bool ConnectingIdentityAuthenticationHandler(IIdentity identity);
 
         public event ConnectingEndPointAuthenticationHandler AuthenticatingEndPoint;
-        public event ConnectingIdentityAuthenticationHandler AuthenticatingIdentity;
 
         public bool IsConnectingEndPointAuthorized(EndPoint endPoint)
         {
@@ -31,15 +29,7 @@ namespace WCell.Intercommunication.Remoting
 
         public bool IsConnectingIdentityAuthorized(IIdentity identity)
         {
-            // Default to true, because usually you wouldn't even
-            // make it through to here with an invalid identity.
-            var value = true;
-
-            var evnt = AuthenticatingIdentity;
-            if (evnt != null)
-                value = evnt(identity);
-
-            return value;
+            return true;
         }
     }
 }

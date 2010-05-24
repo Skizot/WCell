@@ -14,20 +14,21 @@ namespace WCell.Intercommunication.Remoting
     public sealed class RemotingClient<T> : IRemotingConnector<T>
         where T : class, IRemotableObject
     {
-        public RemotingClient(string bind, string addr, int port, string user,
-            string pass, bool secure = true)
+        public RemotingClient(string bind, string addr, int port, bool secure = true)
         {
+            if (bind == null)
+                throw new ArgumentNullException("bind");
+
+            if (addr == null)
+                throw new ArgumentNullException("addr");
+
             ServiceType = typeof(T);
             BindName = bind;
             BindAddress = addr;
             BindPort = port;
-            Username = user;
-            Password = pass;
             Secure = secure;
 
             var props = new Hashtable();
-            props["username"] = user;
-            props["password"] = pass;
             props["retryCount"] = 0; // If the connection doesn't succeed at first, something's wrong.
             props["socketCachePolicy"] = SocketCachePolicy.Default;
             props["socketCacheTimeout"] = 600; // 10 minutes.
@@ -70,10 +71,6 @@ namespace WCell.Intercommunication.Remoting
         public IChannel Channel { get; private set; }
 
         public T Instance { get; private set; }
-
-        public string Username { get; private set; }
-
-        public string Password { get; private set; }
 
         public string FullAddress
         {

@@ -17,6 +17,12 @@ namespace WCell.Intercommunication.Remoting
         public RemotingService(string bind, string addr, int port, bool secure = true,
             ProtectionLevel level = ProtectionLevel.EncryptAndSign, int priority = 100)
         {
+            if (bind == null)
+                throw new ArgumentNullException("bind");
+
+            if (addr == null)
+                throw new ArgumentNullException("addr");
+
             if (priority > 100 || priority < 0)
                 throw new ArgumentOutOfRangeException("priority", "Priority must be between 0 and 100.");
 
