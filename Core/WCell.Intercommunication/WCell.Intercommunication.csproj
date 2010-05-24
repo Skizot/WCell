@@ -127,6 +127,7 @@
       <RequiredTargetFramework>3.5</RequiredTargetFramework>
     </Reference>
     <Reference Include="System.Data" />
+    <Reference Include="System.Runtime.Remoting" />
     <Reference Include="System.Runtime.Serialization">
       <RequiredTargetFramework>3.0</RequiredTargetFramework>
     </Reference>
@@ -153,19 +154,26 @@
     <Compile Include="DataTypes\AuthenticationInfo.cs" />
     <Compile Include="DataTypes\StringBuffer.cs" />
     <Compile Include="DataTypes\RoleGroupInfo.cs" />
+    <Compile Include="Remoting\IRemotableObject.cs" />
+    <Compile Include="Remoting\IRemotingConnector.cs" />
+    <Compile Include="Remoting\RemotableObject.cs" />
+    <Compile Include="Remoting\RemotingAuthenticator.cs" />
+    <Compile Include="Remoting\RemotingClient.cs" />
+    <Compile Include="Remoting\RemotingService.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\Utilities\WCell.Util\WCell.Util.csproj">
       <Project>{F753AF28-A251-4C12-9335-07E8236184F2}</Project>
       <Name>WCell.Util</Name>
-	  <Private>False</Private>
+      <Private>False</Private>
     </ProjectReference>
     <ProjectReference Include="..\WCell.Constants\WCell.Constants.csproj">
       <Project>{42F497A4-0347-491D-8FA8-50E4D8AD19EB}</Project>
       <Name>WCell.Constants</Name>
-	  <Private>False</Private>
+      <Private>False</Private>
     </ProjectReference>
   </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.
