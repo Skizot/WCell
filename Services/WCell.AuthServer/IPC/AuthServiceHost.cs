@@ -1,4 +1,6 @@
 using System;
+using System.Linq;
+using System.Net;
 using System.Threading.Tasks;
 using WCell.AuthServer.Localization;
 using WCell.Intercommunication.Interfaces;
@@ -34,6 +36,7 @@ namespace WCell.AuthServer.IPC
                     _service = new RemotingService<AuthService>(AuthServerConfiguration.IPCBind,
                         AuthServerConfiguration.IPCAddress, AuthServerConfiguration.IPCPort);
 
+                    _service.Authenticator.AuthenticatingEndPoint += AuthorizeIPAddress;
                     var instance = new AuthService();
                     _service.Bind(instance);
 
@@ -63,6 +66,12 @@ namespace WCell.AuthServer.IPC
 
                 IsOpen = true;
             }
+        }
+
+        private static bool AuthorizeIPAddress(EndPoint ep)
+        {
+            var ip = ((IPEndPoint)ep).Address.ToString();
+            return AuthServerConfiguration.RealmIPs.Any(addr => addr.Equals(ip));
         }
     }
 }

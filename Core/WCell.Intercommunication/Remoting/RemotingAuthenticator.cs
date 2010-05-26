@@ -16,8 +16,6 @@ namespace WCell.Intercommunication.Remoting
 
         public bool IsConnectingEndPointAuthorized(EndPoint endPoint)
         {
-            // Default to true, since they still need to go through
-            // the identity phase.
             var value = true;
 
             var evnt = AuthenticatingEndPoint;
