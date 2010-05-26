@@ -17,5 +17,11 @@ namespace WCell.Intercommunication.Remoting
             // mark this method with a OneWayAttribute; that defeats the purpose!
             return DateTime.Now - sent;
         }
+
+        public override object InitializeLifetimeService()
+        {
+            // No lifetime; exists forever.
+            return null;
+        }
     }
 }
