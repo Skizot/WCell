@@ -93,10 +93,9 @@ namespace WCell.Core
 		public const int HEADER_CHANGE_THRESHOLD = 32767;
 
 		/// <summary>
-		/// The delay for every RealmServer to send updates to the AuthServer.
-		/// If the AuthServer didn't receive an Update after this * 1.5, the Realm is considered offline.
+		/// The delay between each ping the AuthServer sends to RealmServers.
 		/// </summary>
-		public static readonly TimeSpan RealmServerUpdateInterval = TimeSpan.FromMinutes(1);
+		public static readonly TimeSpan RealmServerUpdateInterval = TimeSpan.FromSeconds(30);
 
 		/// <summary>
 		/// Root path of the server binaries

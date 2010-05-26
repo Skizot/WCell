@@ -117,8 +117,6 @@ namespace WCell.AuthServer.IPC
                 id = realm.Id;
 
             realm.Service = service;
-            realm.Address = addr;
-            realm.Port = port;
             realm.Name = srvName;
             realm.Category = category;
             realm.ServerType = type;
@@ -126,12 +124,22 @@ namespace WCell.AuthServer.IPC
             realm.Status = status;
             realm.CharCapacity = capacity;
             realm.CharCount = chrCnt;
-            realm.ClientVersion = version;
 
             if (isNew)
-                AuthenticationServer.Realms.Add(realm.Id, realm);
+            {
+                realm.Address = addr;
+                realm.Port = port;
+                realm.ClientVersion = WCellInfo.RequiredVersion; // TODO: fix the weird bug with the serialization here
 
-            _log.Info(Resources.RealmRegistered, realm);
+                _log.Info("New realm " + srvName + " (" + id + ") registered.");
+                AuthenticationServer.Realms.Add(realm.Id, realm);
+            }
+            else
+            {
+                _log.Info("Existing realm " + srvName + " (" + id + ") reconnected.");
+                realm.NotifyOnline();
+            }
+
             return id;
         }
 
@@ -139,10 +147,13 @@ namespace WCell.AuthServer.IPC
         {
             var realm = AuthenticationServer.GetRealmById(id);
             if (realm == null)
+            {
+                _log.Warn("Unknown realm " + id + " attempted to be removed.");
                 return false;
+            }
 
             realm.SetOffline(true);
-            _log.Info(Resources.RealmUnregistered, realm);
+            _log.Info("Realm " + realm.Name + " (" + id + ") unregistered.");
 
             return true;
         }
@@ -163,7 +174,10 @@ namespace WCell.AuthServer.IPC
         {
             var realm = AuthenticationServer.GetRealmById(realmId);
             if (realm == null)
+            {
+                _log.Warn("Unknown realm " + realmId + " tried to flag account " + accName + " as logged in.");
                 return;
+            }
 
             AuthenticationServer.Instance.SetAccountLoggedIn(realm, accName);
         }
@@ -177,7 +191,10 @@ namespace WCell.AuthServer.IPC
         {
             var realm = AuthenticationServer.GetRealmById(realmId);
             if (realm == null)
+            {
+                _log.Warn("Unknown realm " + realmId + " tried to set " + accNames.Length + " accounts as logged in.");
                 return;
+            }
 
             foreach (var acc in accNames)
                 AuthenticationServer.Instance.SetAccountLoggedIn(realm, acc);

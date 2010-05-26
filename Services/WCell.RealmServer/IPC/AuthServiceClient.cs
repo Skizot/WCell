@@ -29,6 +29,7 @@ namespace WCell.RealmServer.IPC
                 }
                 catch (Exception)
                 {
+                    Disconnect();
                     Connect();
                 }
 

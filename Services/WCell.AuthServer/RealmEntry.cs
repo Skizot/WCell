@@ -16,6 +16,8 @@
 
 using System;
 using System.Threading;
+using System.Threading.Tasks;
+using NLog;
 using WCell.AuthServer.Accounts;
 using WCell.AuthServer.Network;
 using WCell.Constants;
@@ -25,6 +27,7 @@ using WCell.Core;
 using WCell.Core.Network;
 using System.ServiceModel;
 using WCell.Intercommunication.Interfaces;
+using WCell.Util.Threading.TaskParallel;
 
 namespace WCell.AuthServer
 {
@@ -33,17 +36,14 @@ namespace WCell.AuthServer
     /// </summary>
     public class RealmEntry
     {
+        private readonly Logger _log = LogManager.GetCurrentClassLogger();
         private static readonly int MaintenanceInterval = (int)(WCellDef.RealmServerUpdateInterval.TotalMilliseconds);
-        private static readonly TimeSpan MaxUpdateOfflineDelay = TimeSpan.FromSeconds(WCellDef.RealmServerUpdateInterval.TotalSeconds * 1.5);
-        private static readonly TimeSpan MaxUpdateDeadDelay = TimeSpan.FromSeconds(WCellDef.RealmServerUpdateInterval.TotalSeconds * 10);
-        //private readonly Timer m_maintenanceTimer;
 
         public RealmEntry(int id)
         {
             Id = id;
-            //m_maintenanceTimer = new Timer(Maintain);
-            StartMaintain();
-            LastUpdate = DateTime.Now;
+
+            Task.Factory.StartNewDelayed(MaintenanceInterval, Maintain);
         }
 
         #region Properties
@@ -59,7 +59,7 @@ namespace WCell.AuthServer
             set;
         }
 
-        public DateTime LastUpdate
+        public TimeSpan LastPingDelay
         {
             get;
             set;
@@ -162,25 +162,31 @@ namespace WCell.AuthServer
 		}
         #endregion
 
-        void StartMaintain()
+        public void NotifyOnline()
         {
-            //m_maintenanceTimer.Change(Timeout.Infinite, MaintenanceInterval);
+            // We're back online, so start checking the connection again.
+            Task.Factory.StartNewDelayed(MaintenanceInterval, Maintain);
         }
 
-		//void Maintain(object sender)
-		//{
-		//    var delay = DateTime.Now - LastUpdate;
-		//    if (delay > MaxUpdateOfflineDelay)
-		//    {
-		//        // server didn't react in a long time -> Consider it offline
-		//        Flags = RealmFlags.Offline;
+        void Maintain()
+        {
+            try
+            {
+                LastPingDelay = Service.Ping(DateTime.Now);
+            }
+            catch (Exception)
+            {
+                // The server isn't there.
+                SetOffline(false);
+                _log.Warn("Realm " + Name + "(" + Id + ") went offline (last ping delay = " +
+                    LastPingDelay + ").");
 
-		//        if (delay > MaxUpdateDeadDelay)
-		//        {
-		//            SetOffline();
-		//        }
-		//    }
-		//}
+                return;
+            }
+
+            // Everything's good.
+            Task.Factory.StartNewDelayed(MaintenanceInterval, Maintain);
+        }
 
         /// <summary>
         /// Removes this realm from the RealmList
@@ -188,9 +194,6 @@ namespace WCell.AuthServer
         public void SetOffline(bool remove)
         {
             AuthenticationServer.Instance.ClearAccounts(Id);
-
-            //m_maintenanceTimer.Change(Timeout.Infinite, Timeout.Infinite);
-			//m_maintenanceTimer.Dispose();
 
 			if (remove)
 			{

@@ -191,6 +191,7 @@ namespace WCell.RealmServer
 		private void ConnectToAuthService()
 		{
 		    AuthServiceClient.Connect();
+		    RegisterRealm();
 		}
 
 		internal void OnStatusChange(RealmStatus oldStatus)
@@ -269,6 +270,7 @@ namespace WCell.RealmServer
 		/// </summary>
 		internal void UnregisterRealm()
 		{
+		    AuthServiceClient.Instance.UnregisterRealmService(AuthServiceClient.RealmId);
 			log.Info(Resources.IPCProxyDisconnected);
 		}
 		#endregion
@@ -543,6 +545,8 @@ namespace WCell.RealmServer
 
 		public override void Stop()
 		{
+		    UnregisterRealm();
+
 			if (AuthServiceClient.Instance != null || AuthServiceClient.IsOpen)
 			    AuthServiceClient.Disconnect();
 
