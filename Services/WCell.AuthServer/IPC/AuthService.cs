@@ -147,6 +147,18 @@ namespace WCell.AuthServer.IPC
             return true;
         }
 
+        public IRealmService GetRealmById(int id)
+        {
+            var realm = AuthenticationServer.GetRealmById(id);
+            return realm == null ? null : realm.Service;
+        }
+
+        public IRealmService GetRealmByName(string name)
+        {
+            var realm = AuthenticationServer.GetRealmByName(name);
+            return realm == null ? null : realm.Service;
+        }
+
         public void SetAccountLoggedIn(int realmId, string accName)
         {
             var realm = AuthenticationServer.GetRealmById(realmId);

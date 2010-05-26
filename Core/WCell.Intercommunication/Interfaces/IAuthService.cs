@@ -36,6 +36,10 @@ namespace WCell.Intercommunication.Interfaces
 
         bool UnregisterRealmService(int id);
 
+        IRealmService GetRealmById(int id);
+
+        IRealmService GetRealmByName(string name);
+
         #endregion
 
         #region Accounts

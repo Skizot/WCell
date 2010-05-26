@@ -1,3 +1,4 @@
+using WCell.Intercommunication.DataTypes;
 using WCell.Intercommunication.Remoting;
 
 namespace WCell.Intercommunication.Interfaces
@@ -7,5 +8,10 @@ namespace WCell.Intercommunication.Interfaces
     /// </summary>
     public interface IRealmService : IRemotableObject
     {
+        #region Miscellaneous
+
+        BufferedCommandResponse ExecuteCommand(string command);
+
+        #endregion
     }
 }
