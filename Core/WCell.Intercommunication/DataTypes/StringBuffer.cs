@@ -7,7 +7,7 @@ using WCell.Util.Commands;
 
 namespace WCell.Intercommunication.DataTypes
 {
-	[DataContract]
+	[Serializable]
 	public class BufferedCommandResponse : IBufferedCommandResponse
 	{
 		public BufferedCommandResponse()
@@ -20,7 +20,6 @@ namespace WCell.Intercommunication.DataTypes
 			Replies = replies.ToList();
 		}
 
-		[DataMember]
 		public List<string> Replies
 		{
 			get;

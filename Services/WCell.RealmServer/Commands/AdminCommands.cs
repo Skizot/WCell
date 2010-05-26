@@ -6,6 +6,7 @@ using Cell.Core;
 using NLog;
 using WCell.Constants.Updates;
 using WCell.Core;
+using WCell.RealmServer.IPC;
 using WCell.Util.Threading;
 using WCell.Core.Variables;
 using WCell.RealmServer.Entities;
@@ -513,13 +514,13 @@ namespace WCell.RealmServer.Commands
 
 		public override void Process(CmdTrigger<RealmServerCmdArgs> trigger)
 		{
-			if (RealmServer.Instance.AuthClient.Channel == null || !RealmServer.Instance.AuthClient.IsConnected)
+			if (AuthServiceClient.Instance == null || !AuthServiceClient.IsOpen)
 			{
 				trigger.Reply("Connection to AuthServer is currently not established.");
 				return;
 			}
 
-			var response = RealmServer.Instance.AuthClient.Channel.ExecuteCommand(trigger.Text.Remainder);
+			var response = AuthServiceClient.Instance.ExecuteCommand(trigger.Text.Remainder);
 			if (response != null)
 			{
 				if (response.Replies.Count > 0)
@@ -706,10 +707,11 @@ namespace WCell.RealmServer.Commands
 			else
 			{
 				// toggle
-				run = !RealmServer.Instance.AuthClient.IsRunning;
+			    run = !AuthServiceClient.IsOpen;
 			}
 
-			RealmServer.Instance.AuthClient.IsRunning = run;
+            // TODO: Re-implement or drop this command.
+			//RealmServer.Instance.AuthClient.IsRunning = run;
 
 			//trigger.Reply("Done. - IPC-Client is now {0}.", run ? "Online" : "Offline");
 			trigger.Reply("Done.");

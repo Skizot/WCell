@@ -15,7 +15,6 @@ namespace WCell.Intercommunication.DataTypes
 	}
 
 	[Serializable]
-	[DataContract]
 	public class RoleGroupInfo
 	{
 		/// <summary>
@@ -45,30 +44,48 @@ namespace WCell.Intercommunication.DataTypes
 			var allCommands = new[] { AllCommands };
 			var defaultCommands = new[] { StatusCommands };
 
-			groups.Add(new RoleGroupInfo("Guest", 0, RoleStatus.Player, false, false, false, false, false, true,
-				defaultCommands, defaultCommands));
+		    groups = new List<RoleGroupInfo>()
+		    {
+		        new RoleGroupInfo("Guest", 0, RoleStatus.Player, false, false, false, false, false, true,
+                    defaultCommands, defaultCommands),
 
-			groups.Add(new RoleGroupInfo("Player", 1, RoleStatus.Player, false, false, false, false, false, true, new[] {
-					"Guest"
-				}, defaultCommands));
-			groups.Add(new RoleGroupInfo("Vip", 5, RoleStatus.Player, false, false, false, false, true, true, new[] {
-					"Player"
-				}, defaultCommands));
-			groups.Add(new RoleGroupInfo("QA", 100, RoleStatus.Staff, false, true, false, true, true, false, new[] {
-					"Vip"
-				}, defaultCommands));
-			groups.Add(new RoleGroupInfo("GM", 500, RoleStatus.Staff, true, false, true, true, true, false, new[] {
-					"QA"
-				}, defaultCommands));
-			groups.Add(new RoleGroupInfo("Developer", 1000, RoleStatus.Admin, true, false, true, true, true, false, new[] {
-					"GM"
-				}, defaultCommands));
-			groups.Add(new RoleGroupInfo("Admin", 5000, RoleStatus.Admin, true, false, true, true, true, false, new[] {
-					"GM"
-				}, defaultCommands));
-			groups.Add(new RoleGroupInfo("Owner", 10000, RoleStatus.Admin, true, false, true, true, true, false, new[] {
-					"Admin"
-				}, allCommands));
+		        new RoleGroupInfo("Player", 1, RoleStatus.Player, false, false, false, false, false, true, new[]
+                {
+                    "Guest"
+                }, defaultCommands),
+
+		        new RoleGroupInfo("Vip", 5, RoleStatus.Player, false, false, false, false, true, true, new[]
+		        {
+		            "Player"
+		        }, defaultCommands),
+
+		        new RoleGroupInfo("QA", 100, RoleStatus.Staff, false, true, false, true, true, false, new[]
+		        {
+		            "Vip"
+		        }, defaultCommands),
+
+		        new RoleGroupInfo("GM", 500, RoleStatus.Staff, true, false, true, true, true, false, new[]
+		        {
+		            "QA"
+		        }, defaultCommands),
+
+		        new RoleGroupInfo("Developer", 1000, RoleStatus.Admin, true, false, true, true, true, false, new[]
+		        {
+		            "GM"
+		        }, defaultCommands),
+
+		        new RoleGroupInfo("Admin", 5000, RoleStatus.Admin, true, false, true, true, true, false, new[]
+		        {
+		            "GM"
+		        }, defaultCommands),
+
+		        new RoleGroupInfo("Owner", 10000, RoleStatus.Admin, true, false, true, true, true, false, new[]
+		        {
+		            "Admin"
+		        }, allCommands),
+		    };
+
+
 			return groups;
 		}
 
@@ -126,14 +143,10 @@ namespace WCell.Intercommunication.DataTypes
 			ScrambleChat = scrambleChat;
 
 			if (HighestRole == null || HighestRole.Rank < rank)
-			{
 				HighestRole = this;
-			}
 
 			if (LowestRole == null || LowestRole.Rank > m_rank)
-			{
 				LowestRole = this;
-			}
 		}
 
 		#region Properties
@@ -142,7 +155,6 @@ namespace WCell.Intercommunication.DataTypes
 		/// The name of the role.
 		/// </summary>
 		[XmlAttribute]
-		[DataMember]
 		public string Name
 		{
 			get;
@@ -153,7 +165,6 @@ namespace WCell.Intercommunication.DataTypes
 		/// What kind of status this roll represents
 		/// </summary>
 		[XmlAttribute]
-		[DataMember]
 		public RoleStatus Status
 		{
 			get;
@@ -164,7 +175,6 @@ namespace WCell.Intercommunication.DataTypes
 		/// Whether the User may login, even if the server is full.
 		/// </summary>
 		[XmlAttribute]
-		[DataMember]
 		public bool MaySkipAuthQueue
 		{
 			get;
@@ -175,7 +185,6 @@ namespace WCell.Intercommunication.DataTypes
 		/// Whether the player's chat will be scrambled
 		/// </summary>
 		[XmlAttribute]
-		[DataMember]
 		public bool ScrambleChat
 		{
 			get;
@@ -188,7 +197,6 @@ namespace WCell.Intercommunication.DataTypes
 		/// Whether or not the role makes the player a GM.
 		/// </summary>
 		[XmlAttribute]
-		[DataMember]
 		public bool AppearAsGM
 		{
 			get;
@@ -199,7 +207,6 @@ namespace WCell.Intercommunication.DataTypes
 		/// Whether or not the role makes the player a QA.
 		/// </summary>
 		[XmlAttribute]
-		[DataMember]
 		public bool AppearAsQA
 		{
 			get;
@@ -210,7 +217,6 @@ namespace WCell.Intercommunication.DataTypes
 		/// The actual Rank of this Role
 		/// </summary>
 		[XmlAttribute]
-		[DataMember]
 		public int Rank
 		{
 			get
@@ -222,14 +228,10 @@ namespace WCell.Intercommunication.DataTypes
 				m_rank = value;
 
 				if (HighestRole == null || HighestRole.Rank < m_rank)
-				{
 					HighestRole = this;
-				}
 
 				if (LowestRole == null || LowestRole.Rank > m_rank)
-				{
 					LowestRole = this;
-				}
 			}
 		}
 
@@ -237,7 +239,6 @@ namespace WCell.Intercommunication.DataTypes
 		/// Whether this Role is allowed to call commands on others (eg. using double prefix)
 		/// </summary>
 		[XmlAttribute]
-		[DataMember]
 		public bool CanUseCommandsOnOthers
 		{
 			get;
@@ -248,7 +249,6 @@ namespace WCell.Intercommunication.DataTypes
 		/// Whether this Role sees ticket information and can handle tickets
 		/// </summary>
 		[XmlAttribute]
-		[DataMember]
 		public bool CanHandleTickets
 		{
 			get;
@@ -260,7 +260,6 @@ namespace WCell.Intercommunication.DataTypes
 		/// </summary>
 		[XmlArray("Inheritance")]
 		[XmlArrayItem("InheritsFrom")]
-		[DataMember]
 		public string[] InheritanceList
 		{
 			get;
@@ -272,7 +271,6 @@ namespace WCell.Intercommunication.DataTypes
 		/// </summary>
 		[XmlArray("Commands")]
 		[XmlArrayItem("Command")]
-		[DataMember]
 		public string[] CommandNames
 		{
 			get;

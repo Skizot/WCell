@@ -21,6 +21,7 @@ using System.Reflection;
 using WCell.Core;
 using WCell.Core.Initialization;
 using WCell.Intercommunication.DataTypes;
+using WCell.RealmServer.IPC;
 using WCell.RealmServer.Misc;
 
 namespace WCell.RealmServer.Privileges
@@ -153,10 +154,9 @@ namespace WCell.RealmServer.Privileges
 
 		public void Setup()
 		{
-			var client = RealmServer.Instance.AuthClient;
-			if (client.IsConnected)
+			if (AuthServiceClient.IsOpen)
 			{
-				var groups = client.Channel.RetrieveRoleGroups();
+				var groups = AuthServiceClient.Instance.GetRoleGroups();
 				if (groups != null)
 				{
 					SetGroupInfo(groups);

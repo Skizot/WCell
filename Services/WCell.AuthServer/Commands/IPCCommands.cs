@@ -28,13 +28,13 @@ namespace WCell.AuthServer.Commands
 
 			public override void Process(CmdTrigger<AuthServerCmdArgs> trigger)
 			{
-				if (IPCServiceHost.IsOpen)
+                if (AuthServiceHost.IsOpen)
 				{
 					trigger.Reply("IPC Service is already running - You need to close it before being able to re-open it.");
 				}
 				else
 				{
-					IPCServiceHost.StartService();
+                    AuthServiceHost.StartService();
 					trigger.Reply("Done.");
 				}
 			}
@@ -51,13 +51,13 @@ namespace WCell.AuthServer.Commands
 
 			public override void Process(CmdTrigger<AuthServerCmdArgs> trigger)
 			{
-				if (!IPCServiceHost.IsOpen)
+                if (!AuthServiceHost.IsOpen)
 				{
 					trigger.Reply("IPC Service is already closed.");
 				}
 				else
 				{
-					IPCServiceHost.StopService();
+                    AuthServiceHost.StopService();
 					trigger.Reply("Done.");
 				}
 			}
@@ -74,28 +74,28 @@ namespace WCell.AuthServer.Commands
 
 			public override void Process(CmdTrigger<AuthServerCmdArgs> trigger)
 			{
-				var open = trigger.Text.NextBool() | !IPCServiceHost.IsOpen;
+                var open = trigger.Text.NextBool() | !AuthServiceHost.IsOpen;
 				if (open)
 				{
-					if (IPCServiceHost.IsOpen)
+                    if (AuthServiceHost.IsOpen)
 					{
 						trigger.Reply("IPC Service already running - You need to close it before being able to re-open it.");
 					}
 					else
 					{
-						IPCServiceHost.StartService();
+                        AuthServiceHost.StartService();
 						trigger.Reply("Done.");
 					}
 				}
 				else
 				{
-					if (!IPCServiceHost.IsOpen)
+                    if (!AuthServiceHost.IsOpen)
 					{
 						trigger.Reply("IPC Service is already closed.");
 					}
 					else
 					{
-						IPCServiceHost.StopService();
+                        AuthServiceHost.StopService();
 						trigger.Reply("Done.");
 					}
 				}

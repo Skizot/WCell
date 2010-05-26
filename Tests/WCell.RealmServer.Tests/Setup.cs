@@ -9,6 +9,7 @@ using WCell.Core;
 using WCell.Constants;
 using WCell.RealmServer.Entities;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
+using WCell.RealmServer.IPC;
 using WCell.RealmServer.RacesClasses;
 using WCell.RealmServer.Network;
 using WCell.RealmServer.Items;
@@ -273,7 +274,7 @@ namespace WCell.RealmServer.Tests
 				var dbSetup = RealmDBUtil.Initialized;
 
 				RealmServer.Instance.Start();
-				RealmServer.Instance.AuthClient.IsRunning = false;
+			    AuthServiceClient.Connect();
 
 				Assert.IsTrue(RealmServer.Instance.IsRunning,
 							  "RealmServer failed to initialize - See the log file for more information: " +

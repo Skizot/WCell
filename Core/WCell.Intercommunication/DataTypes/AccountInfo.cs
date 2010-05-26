@@ -20,26 +20,22 @@ using WCell.Constants;
 
 namespace WCell.Intercommunication.DataTypes
 {
-	[DataContract]
+    [Serializable]
 	public class FullAccountInfo : IAccount
 	{
 		/// <summary>
 		/// ID of this account
 		/// </summary>
-		[DataMember]
 		public long AccountId { get; set; }
 
-		[DataMember]
 		public string Name { get; set; }
 
-		[DataMember]
 		public bool IsActive
 		{
 			get;
 			set;
 		}
 
-		[DataMember]
 		public DateTime? StatusUntil
 		{
 			get;
@@ -49,35 +45,28 @@ namespace WCell.Intercommunication.DataTypes
 		/// <summary>
 		/// E-mail address of this account
 		/// </summary>
-		[DataMember]
 		public string EmailAddress { get; set; }
 
 		/// <summary>
 		/// Highest supported version
 		/// </summary>
-		[DataMember]
 		public ClientId ClientId { get; set; }
 
 		/// <summary>
 		/// The name of the Account's RoleGroup
 		/// </summary>
-		[DataMember]
 		public string RoleGroupName { get; set; }
 
-		[DataMember]
 		public byte[] LastIP { get; set; }
 
-		[DataMember]
 		public DateTime? LastLogin { get; set; }
 
-		[DataMember]
 		public int HighestCharLevel
 		{
 			get;
 			set;
 		}
 
-		[DataMember]
 		public ClientLocale Locale
 		{
 			get;
@@ -88,13 +77,12 @@ namespace WCell.Intercommunication.DataTypes
 	/// <summary>
 	/// Holds information about an account
 	/// </summary>
-	[DataContract]
+    [Serializable]
 	public class AccountInfo : IAccountInfo
 	{
 		/// <summary>
 		/// ID of this account
 		/// </summary>
-		[DataMember]
 		public long AccountId
 		{
 			get;
@@ -104,7 +92,6 @@ namespace WCell.Intercommunication.DataTypes
 		/// <summary>
 		/// E-mail address of this account
 		/// </summary>
-		[DataMember]
 		public string EmailAddress
 		{
 			get;
@@ -114,7 +101,6 @@ namespace WCell.Intercommunication.DataTypes
 		/// <summary>
 		/// Highest supported version
 		/// </summary>
-		[DataMember]
 		public ClientId ClientId
 		{
 			get;
@@ -124,35 +110,30 @@ namespace WCell.Intercommunication.DataTypes
 		/// <summary>
 		/// The name of the Account's RoleGroup
 		/// </summary>
-		[DataMember]
 		public string RoleGroupName
 		{
 			get;
 			set;
 		}
 
-		[DataMember]
 		public byte[] LastIP
 		{
 			get;
 			set;
 		}
 
-		[DataMember]
 		public DateTime? LastLogin
 		{
 			get;
 			set;
 		}
 
-		[DataMember]
 		public int HighestCharLevel
 		{
 			get;
 			set;
 		}
 
-		[DataMember]
 		public ClientLocale Locale
 		{
 			get;

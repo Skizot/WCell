@@ -50,7 +50,7 @@ namespace WCell.AuthServer.Commands
 				var realm = GetRealm(trigger);
 				if (realm != null)
 				{
-					realm.Disconnect(true);
+					realm.SetOffline(true);
 					trigger.Reply("Deleted Realm {0}", realm);
 				}
 			}

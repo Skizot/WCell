@@ -21,6 +21,7 @@ using WCell.Constants;
 using WCell.Constants.Login;
 using WCell.Core;
 using WCell.Core.Cryptography;
+using WCell.RealmServer.IPC;
 using WCell.Util.Threading;
 using WCell.Intercommunication.DataTypes;
 using WCell.RealmServer.Database;
@@ -158,10 +159,9 @@ namespace WCell.RealmServer
 			{
 				m_HighestCharLevel = value;
 				RealmServer.Instance.AddMessage(new Message(() => {
-					if (RealmServer.Instance.AuthClient.IsRunning)
+					if (AuthServiceClient.IsOpen)
 					{
-						RealmServer.Instance.AuthClient.Channel.SetHighestLevel(AccountId,
-																				m_HighestCharLevel);
+						AuthServiceClient.Instance.SetAccountHighestLevel(AccountId, m_HighestCharLevel);
 					}
 				}));
 			}
@@ -274,7 +274,7 @@ namespace WCell.RealmServer
 			var wasStaff = Role.IsStaff;
 			if (!Role.Equals(role))
 			{
-				if (!RealmServer.Instance.AuthClient.Channel.SetAccountRole(AccountId, role.Name))
+				if (!AuthServiceClient.Instance.SetAccountRole(AccountId, role.Name))
 				{
 					return false;
 				}
@@ -318,7 +318,7 @@ namespace WCell.RealmServer
 
 		public bool SetAccountActive(bool active, DateTime? statusUntil)
 		{
-			if (!RealmServer.Instance.AuthClient.Channel.SetAccountActive(AccountId, active, statusUntil))
+			if (!AuthServiceClient.Instance.SetAccountActive(AccountId, active, statusUntil))
 			{
 				return false;
 			}
@@ -339,7 +339,7 @@ namespace WCell.RealmServer
 		{
 			if (EmailAddress != email)
 			{
-				if (!RealmServer.Instance.AuthClient.Channel.SetAccountEmail(AccountId, email))
+				if (!AuthServiceClient.Instance.SetAccountEmail(AccountId, email))
 				{
 					return false;
 				}
@@ -366,7 +366,7 @@ namespace WCell.RealmServer
 			{
 				pass = null;
 			}
-			return RealmServer.Instance.AuthClient.Channel.SetAccountPass(AccountId, oldPassStr, pass);
+			return AuthServiceClient.Instance.SetAccountPassword(AccountId, oldPassStr, pass);
 		}
 
 		/// <summary>
@@ -416,7 +416,7 @@ namespace WCell.RealmServer
 				log.Info("Client ({0}) tried to use online Account: {1}.", client, accountName);
 				LoginHandler.SendAuthSessionErrorReply(client, LoginErrorCode.AUTH_ALREADY_ONLINE);
 			}
-			else if (!RealmServer.Instance.AuthClient.IsConnected)
+			else if (!AuthServiceClient.IsOpen)
 			{
 				LoginHandler.SendAuthSessionErrorReply(client, LoginErrorCode.AUTH_DB_BUSY);
 			}

@@ -23,31 +23,26 @@ namespace WCell.Constants
 	/// Defines a version, i.e. 2.0.10.3424
 	/// </summary>
 	[Serializable]
-	[DataContract]
 	public struct ClientVersion
 	{
 		/// <summary>
 		/// The major version
 		/// </summary>
-		[DataMember]
 		public byte Major;
 
 		/// <summary>
 		/// The minor version
 		/// </summary>
-		[DataMember]
 		public byte Minor;
 
 		/// <summary>
 		/// The revision
 		/// </summary>
-		[DataMember]
 		public byte Revision;
 
 		/// <summary>
 		/// The build
 		/// </summary>
-		[DataMember]
 		public ushort Build;
 
 		/// <summary>

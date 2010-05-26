@@ -316,10 +316,35 @@ namespace WCell.RealmServer
 			set { dbConnectionString = value; }
 		}
 
-		/// <summary>
-		/// The address of the auth server.
-		/// </summary>
-		public static string AuthenticationServerAddress = @"net.tcp://127.0.0.1:7470";
+        /// <summary>
+        /// The listening address of the auth IPC service.
+        /// </summary>
+        public static string AuthIPCAddress = "127.0.0.1";
+
+        /// <summary>
+        /// The listening port of the auth IPC service.
+        /// </summary>
+        public static int AuthIPCPort = 7470;
+
+        /// <summary>
+        /// The bind namespace of the auth IPC service.
+        /// </summary>
+        public static string AuthIPCBind = "WCell.AuthServer.IAuthService";
+
+        /// <summary>
+        /// The listening address of the IPC service.
+        /// </summary>
+        public static string IPCAddress = "127.0.0.1";
+
+        /// <summary>
+        /// The listening port of the IPC service.
+        /// </summary>
+        public static int IPCPort = 7471;
+
+        /// <summary>
+        /// The bind namespace of the IPC service.
+        /// </summary>
+        public static string IPCBind = "WCell.RealmServer.IRealmService";
 
 		/// <summary>
 		/// The username for the auth server connection.

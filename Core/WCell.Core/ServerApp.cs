@@ -46,7 +46,6 @@ namespace WCell.Core
 		protected static Logger s_log = LogManager.GetCurrentClassLogger();
 
 		protected static string s_entryLocation;
-		protected static readonly string[] EmptyStringArr = new string[0];
 
 		protected List<IUpdatable> m_updatables;
 		protected LockfreeQueue<IMessage> m_messageQueue;

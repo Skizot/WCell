@@ -24,6 +24,7 @@ using WCell.Constants.Realm;
 using WCell.Core;
 using WCell.Core.Network;
 using System.ServiceModel;
+using WCell.Intercommunication.Interfaces;
 
 namespace WCell.AuthServer
 {
@@ -37,27 +38,31 @@ namespace WCell.AuthServer
         private static readonly TimeSpan MaxUpdateDeadDelay = TimeSpan.FromSeconds(WCellDef.RealmServerUpdateInterval.TotalSeconds * 10);
         //private readonly Timer m_maintenanceTimer;
 
-        public RealmEntry()
+        public RealmEntry(int id)
         {
+            Id = id;
             //m_maintenanceTimer = new Timer(Maintain);
             StartMaintain();
             LastUpdate = DateTime.Now;
         }
 
         #region Properties
-        public DateTime LastUpdate
+        public int Id
         {
             get;
             set;
         }
 
-        /// <summary>
-        /// Internally assigned unique Id of this Realm.
-        /// </summary>
-        public string ChannelId
+        public IRealmService Service
         {
             get;
-            internal set;
+            set;
+        }
+
+        public DateTime LastUpdate
+        {
+            get;
+            set;
         }
 
         /// <summary>
@@ -148,48 +153,12 @@ namespace WCell.AuthServer
         }
 
         /// <summary>
-        /// Characters the client has on this realm. 
-        /// </summary>
-        public byte Chars
-        {
-            get;
-            internal set;
-        }
-
-        /// <summary>
         /// Realm timezone.
         /// </summary>
         public RealmCategory Category
         {
             get;
             internal set;
-		}
-
-		/// <summary>
-		/// Remote address of the Realm for Auth/Realm - communication
-		/// </summary>
-		public IContextChannel Channel
-		{
-			get;
-			internal set;
-		}
-
-		/// <summary>
-		/// Remote address of the Realm for Auth/Realm - communication
-		/// </summary>
-		public string ChannelAddress
-		{
-			get;
-			internal set;
-		}
-
-		/// <summary>
-		/// Remote port of the Realm for Auth/Realm - communication
-		/// </summary>
-		public int ChannelPort
-		{
-			get;
-			internal set;
 		}
         #endregion
 
@@ -213,30 +182,19 @@ namespace WCell.AuthServer
 		//    }
 		//}
 
-		public void Disconnect(bool remove)
-		{
-			if (Channel != null)
-			{
-				Channel.Abort();
-			}
-			SetOffline(remove);
-		}
-
         /// <summary>
         /// Removes this realm from the RealmList
         /// </summary>
         public void SetOffline(bool remove)
         {
-            var serv = AuthenticationServer.Instance;
-
-            serv.ClearAccounts(ChannelId);
+            AuthenticationServer.Instance.ClearAccounts(Id);
 
             //m_maintenanceTimer.Change(Timeout.Infinite, Timeout.Infinite);
 			//m_maintenanceTimer.Dispose();
 
 			if (remove)
 			{
-				AuthenticationServer.Realms.Remove(ChannelId);
+				AuthenticationServer.Realms.Remove(Id);
 			}
 			else
 			{
@@ -333,7 +291,7 @@ namespace WCell.AuthServer
             packet.WriteCString(name);
             packet.WriteCString(AddressString);
             packet.Write(Population);
-            packet.Write(Chars);
+            packet.Write(0); // amount of characters the player has on this realm
             packet.Write((byte)Category);
             packet.Write((byte)0x00); // realm separator?
         }

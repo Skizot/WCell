@@ -112,10 +112,10 @@
     <value>2.0</value>
   </resheader>
   <resheader name="reader">
-    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <resheader name="writer">
-    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <data name="AccountChallenge" xml:space="preserve">
     <value>Client attempting to challenge auth for account: {0}</value>
@@ -130,7 +130,7 @@
     <value>Client attempted to log into non-existant account: {0}</value>
   </data>
   <data name="AttemptedRequestForUnknownAccount" xml:space="preserve">
-    <value>A request for non-existant account '{0}' was made from {1} (Last Login from: {2})</value>
+    <value>A request for non-existant account '{0}' was made from {1}</value>
   </data>
   <data name="AuthPacketParsed" xml:space="preserve">
     <value>Packet '{0}' parsed successfully!</value>

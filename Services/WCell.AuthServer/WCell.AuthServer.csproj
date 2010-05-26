@@ -172,8 +172,8 @@
     <Compile Include="Database\AuthDBUtil.cs" />
     <Compile Include="Firewall\BanMgr.cs" />
     <Compile Include="Firewall\IPRange.cs" />
-    <Compile Include="IPC\IPCServiceAdapter.cs" />
-    <Compile Include="IPC\IPCServiceHost.cs" />
+    <Compile Include="IPC\AuthService.cs" />
+    <Compile Include="IPC\AuthServiceHost.cs" />
     <Compile Include="Localization\Resources.cs" />
     <Compile Include="Localization\WCell.AuthServer.Designer.cs">
       <AutoGen>True</AutoGen>

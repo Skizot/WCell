@@ -39,7 +39,7 @@ namespace WCell.AuthServer
 	[VariableClassAttribute(true)]
 	public sealed class AuthenticationServer : ServerApp<AuthenticationServer>
 	{
-		private static readonly ImmutableDictionary<string, RealmEntry> m_realmsById = new ImmutableDictionary<string, RealmEntry>();
+		private static readonly ImmutableDictionary<int, RealmEntry> m_realmsById = new ImmutableDictionary<int, RealmEntry>();
 		private readonly SynchronizedDictionary<string, AuthenticationRecord> m_AuthRecords =
 			new SynchronizedDictionary<string, AuthenticationRecord>(StringComparer.InvariantCultureIgnoreCase);
 		private readonly SynchronizedDictionary<string, RealmEntry> m_loggedInAccounts =
@@ -65,7 +65,7 @@ namespace WCell.AuthServer
 		/// <summary>
 		/// Collection of the realms, indexed by their unique ID.
 		/// </summary>
-		public static ImmutableDictionary<string, RealmEntry> Realms
+		public static ImmutableDictionary<int, RealmEntry> Realms
 		{
 			get { return m_realmsById; }
 		}
@@ -166,16 +166,6 @@ namespace WCell.AuthServer
 		}
 
 		#region Private/Internal Management
-		internal RealmEntry GetOrCreateRealm(string id)
-		{
-			RealmEntry realm;
-			if (!m_realmsById.TryGetValue(id, out realm))
-			{
-				m_realmsById.Add(id, realm = new RealmEntry());
-			}
-			return realm;
-		}
-
 		/// <summary>
 		/// Returns the Realm with the given name or null
 		/// </summary>
@@ -191,7 +181,7 @@ namespace WCell.AuthServer
 		/// <summary>
 		/// Returns the Realm with the given id or null
 		/// </summary>
-		public static RealmEntry GetRealmById(string id)
+		public static RealmEntry GetRealmById(int id)
 		{
 			RealmEntry entry;
 			m_realmsById.TryGetValue(id, out entry);
@@ -218,12 +208,12 @@ namespace WCell.AuthServer
 		/// Clears all logged in accounts of the given Server.
 		/// </summary>
 		/// <param name="serverId"></param>
-		internal void ClearAccounts(string serverId)
+		internal void ClearAccounts(int serverId)
 		{
 			lock (m_loggedInAccounts.SyncLock)
 			{
 				var acctsToRemove = (from account in m_loggedInAccounts
-									 where account.Value.ChannelId == serverId
+									 where account.Value.Id == serverId
 									 select account.Key).ToList();
 
 				foreach (var account in acctsToRemove)
@@ -270,7 +260,7 @@ namespace WCell.AuthServer
 			{
 				try
 				{
-					IPCServiceHost.StartService();
+                    AuthServiceHost.StartService();
 				}
 				catch (AddressAlreadyInUseException)
 				{
@@ -282,9 +272,8 @@ namespace WCell.AuthServer
 
 		public override void Stop()
 		{
-			// TODO tobz : add the ability to register cleanup stuff along with initialiation stuff
-
-			IPCServiceHost.StopService();
+            if (AuthServiceHost.Instance != null || AuthServiceHost.IsOpen)
+                AuthServiceHost.StopService();
 
 			base.Stop();
 		}
@@ -349,7 +338,7 @@ namespace WCell.AuthServer
 			}
 
 			s_log.Info("Initiating Shutdown...");
-			IPCServiceHost.StopService();
+
 			s_log.Info("Shutting down...");
 		}
 	}

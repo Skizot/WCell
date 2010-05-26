@@ -385,6 +385,15 @@ namespace WCell.RealmServer.Localization {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to IPC Service failed - Restarting in &apos;{0}&apos; seconds....
+        /// </summary>
+        internal static string IPCFailed {
+            get {
+                return ResourceManager.GetString("IPCFailed", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to IPC device failed to reconnect to the AuthServer. Is the AuthServer running?.
         /// </summary>
         internal static string IPCProxyCouldntReconnect {
@@ -412,7 +421,7 @@ namespace WCell.RealmServer.Localization {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to IPC device failed to connect to the AuthServer. Retrying in {0} seconds....
+        ///   Looks up a localized string similar to IPC device failed to connect to the AuthServer! Retrying on next instance request....
         /// </summary>
         internal static string IPCProxyFailedException {
             get {

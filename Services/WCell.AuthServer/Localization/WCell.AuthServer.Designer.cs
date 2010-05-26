@@ -106,7 +106,7 @@ namespace WCell.AuthServer.Localization {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to A request for non-existant account &apos;{0}&apos; was made from {1} (Last Login from: {2}).
+        ///   Looks up a localized string similar to A request for non-existant account &apos;{0}&apos; was made from {1}.
         /// </summary>
         internal static string AttemptedRequestForUnknownAccount {
             get {

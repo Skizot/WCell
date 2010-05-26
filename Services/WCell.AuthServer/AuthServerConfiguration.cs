@@ -138,7 +138,17 @@ namespace WCell.AuthServer
 		/// <summary>
 		/// The listening address of the IPC service.
 		/// </summary>
-		public static string IPCAddress = @"net.tcp://127.0.0.1:7470";
+	    public static string IPCAddress = "127.0.0.1";
+
+        /// <summary>
+        /// The listening port of the IPC service.
+        /// </summary>
+	    public static int IPCPort = 7470;
+
+        /// <summary>
+        /// The bind namespace of the IPC service.
+        /// </summary>
+	    public static string IPCBind = "WCell.AuthServer.IAuthService";
 
 		/// <summary>
 		/// IPs of the realms to connect to this server
