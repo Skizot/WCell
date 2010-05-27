@@ -150,7 +150,7 @@
     <Compile Include="Interfaces\IAuthService.cs" />
     <Compile Include="DataTypes\AccountInfo.cs" />
     <Compile Include="DataTypes\AuthenticationInfo.cs" />
-    <Compile Include="DataTypes\StringBuffer.cs" />
+    <Compile Include="DataTypes\BufferedCommandResponse.cs" />
     <Compile Include="DataTypes\RoleGroupInfo.cs" />
     <Compile Include="Interfaces\IRealmService.cs" />
     <Compile Include="Remoting\IRemotableObject.cs" />

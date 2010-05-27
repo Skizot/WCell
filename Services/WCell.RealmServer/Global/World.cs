@@ -1192,9 +1192,6 @@ namespace WCell.RealmServer.Global
 			}
 		}
 
-		#region Events
-		#endregion
-
 		#region Instance members
 		public IWorldSpace ParentSpace
 		{

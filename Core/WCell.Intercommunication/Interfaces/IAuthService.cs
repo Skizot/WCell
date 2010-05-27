@@ -4,6 +4,7 @@ using WCell.Constants.Login;
 using WCell.Constants.Realm;
 using WCell.Intercommunication.DataTypes;
 using WCell.Intercommunication.Remoting;
+using WCell.Util.Commands;
 
 namespace WCell.Intercommunication.Interfaces
 {
@@ -68,7 +69,7 @@ namespace WCell.Intercommunication.Interfaces
 
         #region Miscellaneous
 
-        BufferedCommandResponse ExecuteCommand(string command);
+        IBufferedCommandResponse ExecuteCommand(string command);
 
         #endregion
     }

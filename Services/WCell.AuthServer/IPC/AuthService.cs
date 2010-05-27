@@ -12,6 +12,7 @@ using WCell.Core.Cryptography;
 using WCell.Intercommunication.DataTypes;
 using WCell.Intercommunication.Interfaces;
 using WCell.Intercommunication.Remoting;
+using WCell.Util.Commands;
 
 namespace WCell.AuthServer.IPC
 {
@@ -289,7 +290,7 @@ namespace WCell.AuthServer.IPC
             return false;
         }
 
-        public BufferedCommandResponse ExecuteCommand(string command)
+        public IBufferedCommandResponse ExecuteCommand(string command)
         {
             return AuthCommandHandler.ExecuteBufferedCommand(command);
         }
