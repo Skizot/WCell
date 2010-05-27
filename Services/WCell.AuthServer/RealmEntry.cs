@@ -40,7 +40,7 @@ namespace WCell.AuthServer
         private readonly Logger _log = LogManager.GetCurrentClassLogger();
 
         [Variable("RealmMaintenanceInterval")]
-        public static int MaintenanceInterval = 30;
+        public static int MaintenanceInterval = 5;
 
         public RealmEntry(int id)
         {
