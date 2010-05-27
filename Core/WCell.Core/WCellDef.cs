@@ -93,11 +93,6 @@ namespace WCell.Core
 		public const int HEADER_CHANGE_THRESHOLD = 32767;
 
 		/// <summary>
-		/// The delay between each ping the AuthServer sends to RealmServers.
-		/// </summary>
-		public static readonly TimeSpan RealmServerUpdateInterval = TimeSpan.FromSeconds(30);
-
-		/// <summary>
 		/// Root path of the server binaries
 		/// </summary>
 		public static string ROOT_PATH = Environment.CurrentDirectory;

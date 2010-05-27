@@ -28,6 +28,7 @@ using WCell.Core.Network;
 using System.ServiceModel;
 using WCell.Intercommunication.Interfaces;
 using WCell.Util.Threading.TaskParallel;
+using WCell.Util.Variables;
 
 namespace WCell.AuthServer
 {
@@ -37,13 +38,15 @@ namespace WCell.AuthServer
     public class RealmEntry
     {
         private readonly Logger _log = LogManager.GetCurrentClassLogger();
-        private static readonly int MaintenanceInterval = (int)(WCellDef.RealmServerUpdateInterval.TotalMilliseconds);
+
+        [Variable("RealmMaintenanceInterval")]
+        public static int MaintenanceInterval = 30;
 
         public RealmEntry(int id)
         {
             Id = id;
 
-            Task.Factory.StartNewDelayed(MaintenanceInterval, Maintain);
+            Task.Factory.StartNewDelayed(MaintenanceInterval * 1000, Maintain);
         }
 
         #region Properties
@@ -165,7 +168,7 @@ namespace WCell.AuthServer
         public void NotifyOnline()
         {
             // We're back online, so start checking the connection again.
-            Task.Factory.StartNewDelayed(MaintenanceInterval, Maintain);
+            Task.Factory.StartNewDelayed(MaintenanceInterval * 1000, Maintain);
         }
 
         void Maintain()
@@ -185,7 +188,7 @@ namespace WCell.AuthServer
             }
 
             // Everything's good.
-            Task.Factory.StartNewDelayed(MaintenanceInterval, Maintain);
+            Task.Factory.StartNewDelayed(MaintenanceInterval * 1000, Maintain);
         }
 
         /// <summary>
