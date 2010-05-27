@@ -425,6 +425,11 @@ namespace WCell.Core
 
 		private void _OnShutdown()
 		{
+			if (IsShuttingDown)
+			{
+				return;
+			}
+
 			IsShuttingDown = true;
 
 			var evt = Shutdown;
