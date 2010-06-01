@@ -21,18 +21,17 @@ using WCell.Constants;
 using WCell.Constants.Login;
 using WCell.Core;
 using WCell.Core.Cryptography;
-using WCell.RealmServer.IPC;
-using WCell.Util.Threading;
 using WCell.Intercommunication.DataTypes;
 using WCell.RealmServer.Database;
 using WCell.RealmServer.Entities;
 using WCell.RealmServer.Global;
 using WCell.RealmServer.Handlers;
+using WCell.RealmServer.IPC;
 using WCell.RealmServer.Localization;
 using WCell.RealmServer.Network;
 using WCell.RealmServer.Privileges;
-
 using WCell.Util.NLog;
+using WCell.Util.Threading;
 
 namespace WCell.RealmServer
 {
@@ -159,7 +158,7 @@ namespace WCell.RealmServer
 			{
 				m_HighestCharLevel = value;
 				RealmServer.Instance.AddMessage(new Message(() => {
-					if (AuthServiceClient.IsOpen)
+					if (AuthServiceClient.IsOpen && AuthServiceClient.Instance != null)
 					{
 						AuthServiceClient.Instance.SetAccountHighestLevel(AccountId, m_HighestCharLevel);
 					}
@@ -274,10 +273,12 @@ namespace WCell.RealmServer
 			var wasStaff = Role.IsStaff;
 			if (!Role.Equals(role))
 			{
-				if (!AuthServiceClient.Instance.SetAccountRole(AccountId, role.Name))
-				{
+			    var result = false;
+                if (AuthServiceClient.IsOpen && AuthServiceClient.Instance != null)
+    			    result = AuthServiceClient.Instance.SetAccountRole(AccountId, role.Name);
+
+				if (!result)
 					return false;
-				}
 
 				Role = role;
 				if (wasStaff != role.IsStaff)
@@ -318,10 +319,12 @@ namespace WCell.RealmServer
 
 		public bool SetAccountActive(bool active, DateTime? statusUntil)
 		{
-			if (!AuthServiceClient.Instance.SetAccountActive(AccountId, active, statusUntil))
-			{
+		    var result = false;
+            if (AuthServiceClient.IsOpen && AuthServiceClient.Instance != null)
+                result = AuthServiceClient.Instance.SetAccountActive(AccountId, active, statusUntil);
+
+            if (!result)
 				return false;
-			}
 
 			IsActive = active;
 			StatusUntil = statusUntil;
@@ -339,10 +342,12 @@ namespace WCell.RealmServer
 		{
 			if (EmailAddress != email)
 			{
-				if (!AuthServiceClient.Instance.SetAccountEmail(AccountId, email))
-				{
+			    var result = false;
+                if (AuthServiceClient.IsOpen && AuthServiceClient.Instance != null)
+                    result = AuthServiceClient.Instance.SetAccountEmail(AccountId, email);
+
+                if (!result)
 					return false;
-				}
 
 				m_email = email;
 			}
@@ -354,7 +359,7 @@ namespace WCell.RealmServer
 		/// Sets the password for this account and sends it to the Authserver to be saved.
 		/// Blocking call. Make sure to call this from outside the Region-Thread.
 		/// </summary>
-		/// <returns>true if the e-mail address was set; false otherwise</returns>
+		/// <returns>true if the password was set; false otherwise</returns>
 		public bool SetPass(string oldPassStr, string passStr)
 		{
 			byte[] pass;
@@ -366,7 +371,9 @@ namespace WCell.RealmServer
 			{
 				pass = null;
 			}
-			return AuthServiceClient.Instance.SetAccountPassword(AccountId, oldPassStr, pass);
+
+		    return (AuthServiceClient.IsOpen && AuthServiceClient.Instance != null) ?
+                AuthServiceClient.Instance.SetAccountPassword(AccountId, oldPassStr, pass) : false;
 		}
 
 		/// <summary>
@@ -416,7 +423,7 @@ namespace WCell.RealmServer
 				log.Info("Client ({0}) tried to use online Account: {1}.", client, accountName);
 				LoginHandler.SendAuthSessionErrorReply(client, LoginErrorCode.AUTH_ALREADY_ONLINE);
 			}
-			else if (!AuthServiceClient.IsOpen)
+			else if (!AuthServiceClient.IsOpen || AuthServiceClient.Instance == null)
 			{
 				LoginHandler.SendAuthSessionErrorReply(client, LoginErrorCode.AUTH_DB_BUSY);
 			}

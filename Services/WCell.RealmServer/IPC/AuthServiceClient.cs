@@ -3,7 +3,6 @@ using WCell.Intercommunication.Interfaces;
 using WCell.Intercommunication.Remoting;
 using WCell.RealmServer.Localization;
 using WCell.Util.NLog;
-using WCell.Util.Variables;
 
 namespace WCell.RealmServer.IPC
 {
@@ -11,31 +10,9 @@ namespace WCell.RealmServer.IPC
     {
         public static int RealmId { get; set; }
 
-        public static TimeSpan LastPingTime { get; private set; }
-
         public static IAuthService Instance
         {
-            get
-            {
-                if (_client == null)
-                    return null;
-
-                var instance = _client.Instance;
-
-                try
-                {
-                    // There could be a race condition here, but it's not important.
-                    LastPingTime = instance.Ping(DateTime.Now);
-                }
-                catch (Exception)
-                {
-                    Disconnect();
-                    Connect();
-                }
-
-                // In the worst case, may return null.
-                return _client.Instance;
-            }
+            get { return _client == null ? null : _client.Instance; }
         }
 
         public static bool IsOpen { get; private set; }

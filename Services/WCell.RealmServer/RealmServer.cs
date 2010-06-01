@@ -18,24 +18,23 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Net;
-using System.Threading;
 using Cell.Core;
 using WCell.Constants;
 using WCell.Constants.Login;
 using WCell.Core;
-using WCell.RealmServer.IPC;
-using WCell.RealmServer.Localization;
-using WCell.Util.Graphics;
-using WCell.Util.Threading;
+using WCell.Core.Initialization;
 using WCell.Intercommunication.DataTypes;
 using WCell.RealmServer.Chat;
 using WCell.RealmServer.Global;
+using WCell.RealmServer.Handlers;
+using WCell.RealmServer.IPC;
+using WCell.RealmServer.Localization;
 using WCell.RealmServer.Network;
 using WCell.RealmServer.Privileges;
 using WCell.Util;
-using WCell.Core.Initialization;
+using WCell.Util.Graphics;
+using WCell.Util.Threading;
 using WCell.Util.Variables;
-using WCell.RealmServer.Handlers;
 
 namespace WCell.RealmServer
 {
@@ -210,7 +209,7 @@ namespace WCell.RealmServer
 		/// </summary>
 		public void RegisterRealm()
 		{
-			if (!AuthServiceClient.IsOpen || !IsRunning)
+			if (!AuthServiceClient.IsOpen || AuthServiceClient.Instance == null || !IsRunning)
 			{
 				//s_log.Error(Resources.RegisterNotRunning);
 			}
@@ -229,11 +228,8 @@ namespace WCell.RealmServer
 			        RealmServerConfiguration.Status,
 			        WCellInfo.RequiredVersion);
 
-				if (AuthServiceClient.IsOpen)
-				{
-					// set all active accounts (or just clear accounts if re-starting)
-					AuthServiceClient.Instance.SetAccountsActive(LoggedInAccounts.Values.Select(x => x.AccountId).ToArray(), true, null);
-				}
+				// set all active accounts (or just clear accounts if re-starting)
+				AuthServiceClient.Instance.SetAccountsActive(LoggedInAccounts.Values.Select(x => x.AccountId).ToArray(), true, null);
 
 				//m_authServiceClient.IsRegisteredAtAuthServer = true;
 				PrivilegeMgr.Instance.Setup();
@@ -246,7 +242,7 @@ namespace WCell.RealmServer
 		/// </summary>
 		public bool UpdateRealm()
 		{
-			if (!AuthServiceClient.IsOpen || !IsRunning)
+			if (!AuthServiceClient.IsOpen || AuthServiceClient.Instance == null || !IsRunning)
 				return false;
 
 		    AuthServiceClient.RealmId = AuthServiceClient.Instance.RegisterOrUpdateRealmService(
@@ -270,7 +266,9 @@ namespace WCell.RealmServer
 		/// </summary>
 		internal void UnregisterRealm()
 		{
-		    AuthServiceClient.Instance.UnregisterRealmService(AuthServiceClient.RealmId);
+            if (AuthServiceClient.IsOpen && AuthServiceClient.Instance != null)
+    		    AuthServiceClient.Instance.UnregisterRealmService(AuthServiceClient.RealmId);
+
 			log.Info(Resources.IPCProxyDisconnected);
 		}
 		#endregion
@@ -313,7 +311,7 @@ namespace WCell.RealmServer
 		/// <returns>false to shutdown the server</returns>
 		protected override bool OnClientConnected(IClient client)
 		{
-			if (AuthServiceClient.IsOpen)
+			if (AuthServiceClient.IsOpen && AuthServiceClient.Instance != null)
 			{
 				base.OnClientConnected(client);
 				LoginHandler.SendAuthChallenge((IRealmClient)client);
@@ -437,7 +435,7 @@ namespace WCell.RealmServer
 		/// <param name="loggedIn"></param>
 		internal void SetAccountLoggedIn(RealmAccount acc, bool loggedIn)
 		{
-			if (AuthServiceClient.IsOpen)
+			if (AuthServiceClient.IsOpen && AuthServiceClient.Instance != null)
 			{
 				if (loggedIn)
 				{
@@ -466,7 +464,7 @@ namespace WCell.RealmServer
 			RealmAccount acc;
 			if (!LoggedInAccounts.TryGetValue(accountName, out acc))
 			{
-				if (AuthServiceClient.IsOpen)
+				if (AuthServiceClient.IsOpen && AuthServiceClient.Instance != null)
 				{
 					return AuthServiceClient.Instance.GetAccountInfo(accountName, requestAddr);
 				}
@@ -492,7 +490,7 @@ namespace WCell.RealmServer
 			RealmAccount acc;
 			if (!LoggedInAccounts.TryGetValue(accountName, out acc))
 			{
-				if (AuthServiceClient.IsOpen)
+				if (AuthServiceClient.IsOpen && AuthServiceClient.Instance != null)
 				{
 					var info = AuthServiceClient.Instance.GetAccountInfo(accountName, null);
 					if (info != null)
@@ -512,7 +510,7 @@ namespace WCell.RealmServer
 		/// <returns>The request information or null if it did not succeed</returns>
 		public AuthenticationInfo GetAuthenticationInfo(string accountName)
 		{
-			if (AuthServiceClient.IsOpen)
+			if (AuthServiceClient.IsOpen && AuthServiceClient.Instance != null)
 			{
 				return AuthServiceClient.Instance.GetAuthenticationInfo(accountName);
 			}

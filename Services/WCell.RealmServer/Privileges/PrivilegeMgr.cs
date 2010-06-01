@@ -154,7 +154,7 @@ namespace WCell.RealmServer.Privileges
 
 		public void Setup()
 		{
-			if (AuthServiceClient.IsOpen)
+			if (AuthServiceClient.IsOpen && AuthServiceClient.Instance != null)
 			{
 				var groups = AuthServiceClient.Instance.GetRoleGroups();
 				if (groups != null)
