@@ -21,13 +21,11 @@ using System.ServiceModel;
 using Cell.Core;
 using Cell.Core.Collections;
 using WCell.AuthServer.Accounts;
-using WCell.AuthServer.Firewall;
 using WCell.AuthServer.IPC;
 using WCell.AuthServer.Localization;
 using WCell.AuthServer.Network;
 using WCell.Core;
 using WCell.Intercommunication.DataTypes;
-using WCell.Util.NLog;
 using WCell.Util.Variables;
 
 namespace WCell.AuthServer
@@ -39,7 +37,7 @@ namespace WCell.AuthServer
 	[VariableClassAttribute(true)]
 	public sealed class AuthenticationServer : ServerApp<AuthenticationServer>
 	{
-		private static readonly ImmutableDictionary<int, RealmEntry> m_realmsById = new ImmutableDictionary<int, RealmEntry>();
+	    private static readonly ImmutableDictionary<string, RealmEntry> m_realms = new ImmutableDictionary<string, RealmEntry>();
 		private readonly SynchronizedDictionary<string, AuthenticationRecord> m_AuthRecords =
 			new SynchronizedDictionary<string, AuthenticationRecord>(StringComparer.InvariantCultureIgnoreCase);
 		private readonly SynchronizedDictionary<string, RealmEntry> m_loggedInAccounts =
@@ -65,9 +63,9 @@ namespace WCell.AuthServer
 		/// <summary>
 		/// Collection of the realms, indexed by their unique ID.
 		/// </summary>
-		public static ImmutableDictionary<int, RealmEntry> Realms
+		public static ImmutableDictionary<string, RealmEntry> Realms
 		{
-			get { return m_realmsById; }
+			get { return m_realms; }
 		}
 
 		/// <summary>
@@ -75,7 +73,7 @@ namespace WCell.AuthServer
 		/// </summary>
 		public int RealmCount
 		{
-			get { return m_realmsById.Count; }
+			get { return m_realms.Count; }
 		}
 
 		/// <summary>
@@ -172,20 +170,7 @@ namespace WCell.AuthServer
 		/// <param name="name"></param>
 		public static RealmEntry GetRealmByName(string name)
 		{
-			//lock (m_realmsById.SyncLock)
-			{
-				return m_realmsById.Values.Where(realm => realm.Name.Equals(name)).FirstOrDefault();
-			}
-		}
-
-		/// <summary>
-		/// Returns the Realm with the given id or null
-		/// </summary>
-		public static RealmEntry GetRealmById(int id)
-		{
-			RealmEntry entry;
-			m_realmsById.TryGetValue(id, out entry);
-			return entry;
+		    return m_realms.Values.Where(x => x.Name == name).FirstOrDefault();
 		}
 
 		/// <summary>
@@ -207,13 +192,12 @@ namespace WCell.AuthServer
 		/// <summary>
 		/// Clears all logged in accounts of the given Server.
 		/// </summary>
-		/// <param name="serverId"></param>
-		internal void ClearAccounts(int serverId)
+		internal void ClearAccounts(string realmName)
 		{
 			lock (m_loggedInAccounts.SyncLock)
 			{
 				var acctsToRemove = (from account in m_loggedInAccounts
-									 where account.Value.Id == serverId
+									 where account.Value.Name == realmName
 									 select account.Key).ToList();
 
 				foreach (var account in acctsToRemove)
@@ -244,7 +228,7 @@ namespace WCell.AuthServer
 		internal void ClearRealms()
 		{
 			m_loggedInAccounts.Clear();
-			m_realmsById.Clear();
+			m_realms.Clear();
 		}
 		#endregion
 

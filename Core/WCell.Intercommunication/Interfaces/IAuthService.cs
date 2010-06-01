@@ -31,13 +31,11 @@ namespace WCell.Intercommunication.Interfaces
 
         #region Realms
 
-        int RegisterOrUpdateRealmService(IRealmService service, string srvName, string addr, int port,
+        void RegisterOrUpdateRealmService(IRealmService service, string name, string addr, int port,
             int chrCnt, int capacity, RealmServerType type, RealmFlags flags, RealmCategory category,
             RealmStatus status, ClientVersion version);
 
-        bool UnregisterRealmService(int id);
-
-        IRealmService GetRealmById(int id);
+        bool UnregisterRealmService(string name);
 
         IRealmService GetRealmByName(string name);
 
@@ -45,11 +43,11 @@ namespace WCell.Intercommunication.Interfaces
 
         #region Accounts
 
-        void SetAccountLoggedIn(int realmId, string accName);
+        void SetAccountLoggedIn(string realmName, string accName);
 
         void SetAccountLoggedOut(string accName);
 
-        void SetAccountsLoggedIn(int realmId, string[] accNames);
+        void SetAccountsLoggedIn(string realmName, string[] accNames);
 
         void SetAccountsLoggedOut(string[] accNames);
 

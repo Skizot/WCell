@@ -20,16 +20,6 @@ namespace WCell.AuthServer.IPC
     {
         private static readonly Logger _log = LogManager.GetCurrentClassLogger();
 
-        /// <summary>
-        /// Incremental ID to be assigned to realms.
-        /// </summary>
-        private volatile int _lastRealmId = 1;
-
-        private int GenerateNewRealmId()
-        {
-            return _lastRealmId++;
-        }
-
         public AuthenticationInfo GetAuthenticationInfo(string accName)
         {
             var authInfo = AuthenticationServer.Instance.GetAuthenticationInfo(accName);
@@ -102,23 +92,17 @@ namespace WCell.AuthServer.IPC
             return PrivilegeMgr.Instance.RoleGroups.Values.ToArray();
         }
 
-        public int RegisterOrUpdateRealmService(IRealmService service, string srvName, string addr,
+        public void RegisterOrUpdateRealmService(IRealmService service, string name, string addr,
             int port, int chrCnt, int capacity, RealmServerType type, RealmFlags flags,
             RealmCategory category, RealmStatus status, ClientVersion version)
         {
-            var realm = AuthenticationServer.GetRealmByName(srvName);
+            var realm = AuthenticationServer.GetRealmByName(name);
             var isNew = realm == null;
-            int id;
             if (isNew) // This is a new realm.
-            {
-                id = GenerateNewRealmId();
-                realm = new RealmEntry(id);
-            }
-            else // Just an existing realm re-connecting.
-                id = realm.Id;
+                realm = new RealmEntry();
 
             realm.Service = service;
-            realm.Name = srvName;
+            realm.Name = name;
             realm.Category = category;
             realm.ServerType = type;
             realm.Flags = flags;
@@ -132,37 +116,29 @@ namespace WCell.AuthServer.IPC
                 realm.Port = port;
                 realm.ClientVersion = WCellInfo.RequiredVersion; // TODO: fix the weird bug with the serialization here
 
-                _log.Info("New realm " + srvName + " (" + id + ") registered.");
-                AuthenticationServer.Realms.Add(realm.Id, realm);
+                _log.Info("New realm " + name + " registered.");
+                AuthenticationServer.Realms.Add(name, realm);
             }
             else
             {
-                _log.Info("Existing realm " + srvName + " (" + id + ") reconnected.");
+                _log.Info("Existing realm " + name + " reconnected.");
                 realm.NotifyOnline();
             }
-
-            return id;
         }
 
-        public bool UnregisterRealmService(int id)
+        public bool UnregisterRealmService(string name)
         {
-            var realm = AuthenticationServer.GetRealmById(id);
+            var realm = AuthenticationServer.GetRealmByName(name);
             if (realm == null)
             {
-                _log.Warn("Unknown realm " + id + " attempted to be removed.");
+                _log.Warn("Unknown realm " + name + " attempted to be removed.");
                 return false;
             }
 
             realm.SetOffline(true);
-            _log.Info("Realm " + realm.Name + " (" + id + ") unregistered.");
+            _log.Info("Realm " + realm.Name + " (" + name + ") unregistered.");
 
             return true;
-        }
-
-        public IRealmService GetRealmById(int id)
-        {
-            var realm = AuthenticationServer.GetRealmById(id);
-            return realm == null ? null : realm.Service;
         }
 
         public IRealmService GetRealmByName(string name)
@@ -171,12 +147,12 @@ namespace WCell.AuthServer.IPC
             return realm == null ? null : realm.Service;
         }
 
-        public void SetAccountLoggedIn(int realmId, string accName)
+        public void SetAccountLoggedIn(string realmName, string accName)
         {
-            var realm = AuthenticationServer.GetRealmById(realmId);
+            var realm = AuthenticationServer.GetRealmByName(realmName);
             if (realm == null)
             {
-                _log.Warn("Unknown realm " + realmId + " tried to flag account " + accName + " as logged in.");
+                _log.Warn("Unknown realm " + realmName + " tried to flag account " + accName + " as logged in.");
                 return;
             }
 
@@ -188,12 +164,12 @@ namespace WCell.AuthServer.IPC
             AuthenticationServer.Instance.SetAccountLoggedOut(accName);
         }
 
-        public void SetAccountsLoggedIn(int realmId, string[] accNames)
+        public void SetAccountsLoggedIn(string realmName, string[] accNames)
         {
-            var realm = AuthenticationServer.GetRealmById(realmId);
+            var realm = AuthenticationServer.GetRealmByName(realmName);
             if (realm == null)
             {
-                _log.Warn("Unknown realm " + realmId + " tried to set " + accNames.Length + " accounts as logged in.");
+                _log.Warn("Unknown realm " + realmName + " tried to set " + accNames.Length + " accounts as logged in.");
                 return;
             }
 

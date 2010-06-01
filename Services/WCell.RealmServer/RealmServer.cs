@@ -215,7 +215,7 @@ namespace WCell.RealmServer
 			}
 			else
 			{
-			    AuthServiceClient.RealmId = AuthServiceClient.Instance.RegisterOrUpdateRealmService(
+			    AuthServiceClient.Instance.RegisterOrUpdateRealmService(
 			        RealmServiceHost.Instance,
 			        RealmServerConfiguration.RealmName,
 			        ExternalAddress,
@@ -245,7 +245,7 @@ namespace WCell.RealmServer
 			if (!AuthServiceClient.IsOpen || AuthServiceClient.Instance == null || !IsRunning)
 				return false;
 
-		    AuthServiceClient.RealmId = AuthServiceClient.Instance.RegisterOrUpdateRealmService(
+		    AuthServiceClient.Instance.RegisterOrUpdateRealmService(
 		        RealmServiceHost.Instance,
 		        RealmServerConfiguration.RealmName,
 		        ExternalAddress,
@@ -267,7 +267,7 @@ namespace WCell.RealmServer
 		internal void UnregisterRealm()
 		{
             if (AuthServiceClient.IsOpen && AuthServiceClient.Instance != null)
-    		    AuthServiceClient.Instance.UnregisterRealmService(AuthServiceClient.RealmId);
+    		    AuthServiceClient.Instance.UnregisterRealmService(RealmServerConfiguration.RealmName);
 
 			log.Info(Resources.IPCProxyDisconnected);
 		}
@@ -440,7 +440,7 @@ namespace WCell.RealmServer
 				if (loggedIn)
 				{
 					acc.OnLogin();
-					AuthServiceClient.Instance.SetAccountLoggedIn(AuthServiceClient.RealmId, acc.Name);
+                    AuthServiceClient.Instance.SetAccountLoggedIn(RealmServerConfiguration.RealmName, acc.Name);
 				}
 				else
 				{

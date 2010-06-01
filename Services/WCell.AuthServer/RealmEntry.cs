@@ -15,17 +15,13 @@
  *************************************************************************/
 
 using System;
-using System.Threading;
 using System.Threading.Tasks;
 using NLog;
-using WCell.AuthServer.Accounts;
 using WCell.AuthServer.Network;
 using WCell.Constants;
 using WCell.Constants.Login;
 using WCell.Constants.Realm;
-using WCell.Core;
 using WCell.Core.Network;
-using System.ServiceModel;
 using WCell.Intercommunication.Interfaces;
 using WCell.Util.Threading.TaskParallel;
 using WCell.Util.Variables;
@@ -42,20 +38,12 @@ namespace WCell.AuthServer
         [Variable("RealmMaintenanceInterval")]
         public static int MaintenanceInterval = 5;
 
-        public RealmEntry(int id)
+        public RealmEntry()
         {
-            Id = id;
-
             Task.Factory.StartNewDelayed(MaintenanceInterval * 1000, Maintain);
         }
 
         #region Properties
-        public int Id
-        {
-            get;
-            set;
-        }
-
         public IRealmService Service
         {
             get;
@@ -181,7 +169,7 @@ namespace WCell.AuthServer
             {
                 // The server isn't there.
                 SetOffline(false);
-                _log.Warn("Realm " + Name + "(" + Id + ") went offline (last ping delay = " +
+                _log.Warn("Realm " + Name + " went offline (last ping delay = " +
                     LastPingDelay + ").");
 
                 return;
@@ -196,11 +184,11 @@ namespace WCell.AuthServer
         /// </summary>
         public void SetOffline(bool remove)
         {
-            AuthenticationServer.Instance.ClearAccounts(Id);
+            AuthenticationServer.Instance.ClearAccounts(Name);
 
 			if (remove)
 			{
-				AuthenticationServer.Realms.Remove(Id);
+				AuthenticationServer.Realms.Remove(Name);
 			}
 			else
 			{

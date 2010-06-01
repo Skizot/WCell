@@ -8,8 +8,6 @@ namespace WCell.RealmServer.IPC
 {
     public static class AuthServiceClient
     {
-        public static int RealmId { get; set; }
-
         public static IAuthService Instance
         {
             get { return _client == null ? null : _client.Instance; }
