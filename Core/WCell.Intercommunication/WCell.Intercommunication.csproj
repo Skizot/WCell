@@ -146,6 +146,7 @@
     <Compile Include="..\..\Utilities\WCell.SolutionItems\SolutionInfo.cs">
       <Link>Properties\SolutionInfo.cs</Link>
     </Compile>
+    <Compile Include="DataTypes\IRoleGroup.cs" />
     <Compile Include="DataTypes\UpdateRealmResponse.cs" />
     <Compile Include="Interfaces\IAuthService.cs" />
     <Compile Include="DataTypes\AccountInfo.cs" />

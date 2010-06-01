@@ -15,7 +15,7 @@ namespace WCell.Intercommunication.DataTypes
 	}
 
 	[Serializable]
-	public class RoleGroupInfo
+	public class RoleGroupInfo : IRoleGroup
 	{
 		/// <summary>
 		/// Represents the highest role that has been loaded (usually: Owner).

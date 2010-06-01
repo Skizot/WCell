@@ -29,7 +29,7 @@ namespace WCell.RealmServer.Privileges
 	/// <summary>
 	/// Handles the management of role groups, and their permissions.
 	/// </summary>
-	public partial class PrivilegeMgr : Manager<PrivilegeMgr>
+	public class PrivilegeMgr : Manager<PrivilegeMgr>
 	{
 		#region Fields
 		private Dictionary<string, RoleGroup> m_roleGroups;
@@ -126,18 +126,6 @@ namespace WCell.RealmServer.Privileges
 		}
 
 		#endregion
-
-		public bool CanRead(MemberInfo member, IUser user)
-		{
-			// TODO: Use Attributes to verify whether the user may use it
-			return true;
-		}
-
-		public bool CanWrite(MemberInfo member, IUser user)
-		{
-			// TODO: Use Attributes to verify whether the user may use it
-			return true;
-		}
 
 		#region Initialization/teardown
 
