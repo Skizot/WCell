@@ -1,24 +1,21 @@
 using System;
-using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
 using Cell.Core;
 using NLog;
 using WCell.Constants.Updates;
 using WCell.Core;
-using WCell.RealmServer.IPC;
-using WCell.RealmServer.Lang;
-using WCell.Util.Threading;
-using WCell.Core.Variables;
+using WCell.Intercommunication.DataTypes;
+using WCell.RealmServer.Content;
 using WCell.RealmServer.Entities;
 using WCell.RealmServer.Global;
+using WCell.RealmServer.IPC;
+using WCell.RealmServer.Lang;
+using WCell.RealmServer.Misc;
 using WCell.RealmServer.Network;
 using WCell.RealmServer.Privileges;
 using WCell.Util.Commands;
-using WCell.Intercommunication.DataTypes;
-using WCell.RealmServer.Content;
-using WCell.RealmServer.Misc;
-using WCell.Util.NLog;
+using WCell.Util.Threading;
 
 namespace WCell.RealmServer.Commands
 {
@@ -714,24 +711,31 @@ namespace WCell.RealmServer.Commands
 
 		public override void Process(CmdTrigger<RealmServerCmdArgs> trigger)
 		{
-			//var mods = trigger.Text.NextModifiers();
-			bool run;
-			if (trigger.Text.HasNext)
-			{
-				run = trigger.Text.NextBool();
-			}
-			else
-			{
-				// toggle
-			    run = !AuthServiceClient.IsOpen;
-			}
-
-            // TODO: Re-implement or drop this command.
-			//RealmServer.Instance.AuthClient.IsRunning = run;
-
-			//trigger.Reply("Done. - IPC-Client is now {0}.", run ? "Online" : "Offline");
-			trigger.Reply("Done.");
-			//base.Process(trigger);
+            var open = trigger.Text.NextBool() | !AuthServiceClient.IsOpen;
+            if (open)
+            {
+                if (AuthServiceClient.IsOpen)
+                {
+                    trigger.Reply("IPC Client already running - You need to close it before being able to re-open it.");
+                }
+                else
+                {
+                    AuthServiceClient.Connect();
+                    trigger.Reply("Done.");
+                }
+            }
+            else
+            {
+                if (!AuthServiceClient.IsOpen)
+                {
+                    trigger.Reply("IPC Client is already closed.");
+                }
+                else
+                {
+                    AuthServiceClient.Disconnect();
+                    trigger.Reply("Done.");
+                }
+            }
 		}
 	}
 	#endregion
