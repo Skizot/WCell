@@ -473,7 +473,7 @@ namespace WCell.RealmServer
 
 				log.Info("Account \"{0}\" logged in from {1}.", accountName, client.ClientAddress);
 
-				if (RealmServer.Instance.NumberOfClients > RealmServerConfiguration.MaxClientCount &&
+				if (RealmServer.Instance.ClientCount > RealmServerConfiguration.MaxClientCount &&
 					!account.Role.MaySkipAuthQueue)
 				{
 					AuthQueue.EnqueueClient(client);
