@@ -31,6 +31,10 @@ namespace WCell.RealmServer.IPC
                     _client.Connect();
 
                     IsOpen = true;
+
+                    var evnt = Connected;
+                    if (evnt != null)
+                        evnt();
                 }
                 catch (Exception ex)
                 {
@@ -52,7 +56,17 @@ namespace WCell.RealmServer.IPC
                 }
 
                 IsOpen = false;
+
+                var evnt = Disconnected;
+                if (evnt != null)
+                    evnt();
             }
         }
+
+        public delegate void ConnectionChangeHandler();
+
+        public static event ConnectionChangeHandler Connected;
+
+        public static event ConnectionChangeHandler Disconnected;
     }
 }

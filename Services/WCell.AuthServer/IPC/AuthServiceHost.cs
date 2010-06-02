@@ -41,6 +41,10 @@ namespace WCell.AuthServer.IPC
                     _service.Bind(instance);
 
                     IsOpen = true;
+
+                    var evnt = Connected;
+                    if (evnt != null)
+                        evnt();
                 }
                 catch (Exception ex)
                 {
@@ -64,7 +68,11 @@ namespace WCell.AuthServer.IPC
                 {
                 }
 
-                IsOpen = true;
+                IsOpen = false;
+
+                var evnt = Disconnected;
+                if (evnt != null)
+                    evnt();
             }
         }
 
@@ -73,5 +81,11 @@ namespace WCell.AuthServer.IPC
             var ip = ((IPEndPoint)ep).Address.ToString();
             return AuthServerConfiguration.RealmIPs.Any(addr => addr.Equals(ip));
         }
+
+        public delegate void ConnectionChangeHandler();
+
+        public static event ConnectionChangeHandler Connected;
+
+        public static event ConnectionChangeHandler Disconnected;
     }
 }
