@@ -18,7 +18,7 @@ namespace WCell.Tools.Commands
 			protected override void Initialize()
 			{
 				Init("Random", "R");
-				EnglishParamInfo = "[<min> [<max> [<mindist> [<maxdist>]]]]";
+				ParamInfo = "[<min> [<max> [<mindist> [<maxdist>]]]]";
 			}
 
 			public override void Process(CmdTrigger<ToolCmdArgs> trigger)

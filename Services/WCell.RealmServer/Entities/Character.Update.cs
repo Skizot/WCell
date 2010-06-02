@@ -16,7 +16,7 @@
 
 using System;
 using System.Collections.Generic;
-using WCell.Util.Collections;
+using Cell.Core.Collections;
 using WCell.Constants;
 using WCell.Constants.Items;
 using WCell.Constants.Updates;

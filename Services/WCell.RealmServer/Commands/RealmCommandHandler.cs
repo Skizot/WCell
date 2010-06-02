@@ -6,7 +6,6 @@ using WCell.Core.Initialization;
 using WCell.RealmServer.Chat;
 using WCell.RealmServer.Entities;
 using WCell.RealmServer.Global;
-using WCell.RealmServer.Lang;
 using WCell.RealmServer.Misc;
 using WCell.Util;
 using WCell.Util.Commands;
@@ -97,7 +96,7 @@ namespace WCell.RealmServer.Commands
 					{
 						if (!silent)
 						{
-							trigger.Reply(LangKey.MustNotUseCommand, cmd.Name);
+							trigger.Reply("You are not allowed to use the \"{0}\"-Command!", cmd.Name);
 						}
 						return false;
 					}
@@ -511,7 +510,7 @@ namespace WCell.RealmServer.Commands
 						else
 						{
 							var clss = (ClassMask)val;
-							mayExec = clss == ClassMask.None || user.ClassMask.HasAnyFlag(clss);
+							mayExec = clss == ClassMask.None || user.ClassMask.HasFlag(clss);
 						}
 						return false;
 					}

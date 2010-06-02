@@ -105,13 +105,13 @@ namespace WCell.RealmServer.Entities
 
 			foreach (var school in WCellDef.AllDamageSchools)
 			{
-				SetInt32(PlayerFields.MOD_DAMAGE_DONE_PCT + (int)school, 1);
+				SetFloat(PlayerFields.MOD_DAMAGE_DONE_PCT + (int)school, 1);
 			}
 			SetFloat(PlayerFields.DODGE_PERCENTAGE, 1.0f);
 
 			// spells
 			PlayerSpellCollection spells;
-			if (!record.JustCreated && SpellHandler.PlayerSpellCollections.TryGetValue(EntityId.Low, out spells))
+			if (!record.New && SpellHandler.PlayerSpellCollections.TryGetValue(EntityId.Low, out spells))
 			{
 				SpellHandler.PlayerSpellCollections.Remove(EntityId.Low);
 				m_spells = spells;
@@ -171,7 +171,7 @@ namespace WCell.RealmServer.Entities
 			CanMelee = true;
 
 			// basic setup
-			if (record.JustCreated)
+			if (record.New)
 			{
 				Power = PowerType == PowerType.Rage ? 0 : MaxPower;
 				SetInt32(UnitFields.HEALTH, MaxHealth);
@@ -181,6 +181,8 @@ namespace WCell.RealmServer.Entities
 				Power = m_record.Power;
 				SetInt32(UnitFields.HEALTH, m_record.Health);
 			}
+
+			InitializeRegeneration();
 
 		}
 		#endregion
@@ -201,7 +203,7 @@ namespace WCell.RealmServer.Entities
 			}
 			Model = model;
 
-			if (m_record.JustCreated)
+			if (m_record.New)
 			{
 				if (m_zone != null)
 				{
@@ -445,7 +447,7 @@ namespace WCell.RealmServer.Entities
 
 						m_zone = m_region.GetZone(m_record.Zone);
 
-						if (m_zone != null && m_record.JustCreated)
+						if (m_zone != null && m_record.New)
 						{
 							// set initial zone explored automatically
 							SetZoneExplored(m_zone.Id, false);
@@ -466,19 +468,18 @@ namespace WCell.RealmServer.Entities
 		/// Is called after Character has been added to a region the first time and 
 		/// before it receives the first Update packet
 		/// </summary>
-		internal protected void InitializeCharacter()
+		internal void InitializeCharacter()
 		{
 			World.AddCharacter(this);
 			m_initialized = true;
 
 			try
 			{
-				InitializeRegeneration();
 				((PlayerSpellCollection)m_spells).PlayerInitialize();
 
 				OnLogin();
 
-				if (!m_record.JustCreated)
+				if (!m_record.New)
 				{
 					LoadDeathState();
 					LoadEquipmentState();
@@ -490,7 +491,7 @@ namespace WCell.RealmServer.Entities
 #endif
 					InitItems();
 
-				if (m_record.JustCreated)
+				if (m_record.New)
 				{
 					if (!m_client.Account.Role.IsStaff)
 					{
@@ -501,7 +502,7 @@ namespace WCell.RealmServer.Entities
 						m_zone.EnterZone(this, null);
 					}
 
-					m_spells.AddDefaultSpells();
+					m_spells.AddDefaults();
 					m_reputations.Initialize();
 				}
 
@@ -517,7 +518,7 @@ namespace WCell.RealmServer.Entities
 				RelationMgr.Instance.OnCharacterLogin(this);
 
 				LastLogin = DateTime.Now;
-				var isNew = m_record.JustCreated;
+				var isNew = m_record.New;
 
 				AddMessage(() =>
 				{
@@ -583,10 +584,10 @@ namespace WCell.RealmServer.Entities
 					}
 				});
 
-				if (m_record.JustCreated)
+				if (m_record.New)
 				{
 					SaveLater();
-					m_record.JustCreated = false;
+					m_record.New = false;
 				}
 				else
 				{
@@ -618,7 +619,7 @@ namespace WCell.RealmServer.Entities
 		/// </summary>
 		protected internal void InitItems()
 		{
-			if (m_record.JustCreated)
+			if (m_record.New)
 			{
 				m_inventory.AddDefaultItems();
 			}
@@ -720,13 +721,10 @@ namespace WCell.RealmServer.Entities
 			{
 				return false;
 			}
-
-			if (DebugUtil.Dumps)
-			{
-				var writer = DebugUtil.GetTextWriter(m_client.Account);
-				writer.WriteLine("Saving {0}...", Name);
-			}
-
+#if DEBUG
+			var writer = DebugUtil.GetTextWriter(m_client.Account);
+			writer.WriteLine("Saving {0}...", Name);
+#endif
 			try
 			{
 				if (m_record == null)
@@ -851,13 +849,9 @@ namespace WCell.RealmServer.Entities
 					saveScope.Flush();
 				}
 				m_record.LastSaveTime = DateTime.Now;
-
-				if (DebugUtil.Dumps)
-				{
-					var writer = DebugUtil.GetTextWriter(m_client.Account);
-					writer.WriteLine("Saved {0} (Region: {1}).", Name, m_record.RegionId);
-				}
-
+#if DEBUG
+				writer.WriteLine("Saved {0} (Region: {1}).", Name, m_record.RegionId);
+#endif
 				return true;
 			}
 			catch (Exception ex)
@@ -882,12 +876,10 @@ namespace WCell.RealmServer.Entities
 		{
 			SendSystemMessage("Saving failed - Please excuse the inconvenience!");
 
-			if (DebugUtil.Dumps)
-			{
-				var writer = DebugUtil.GetTextWriter(m_client.Account);
-				writer.WriteLine("Failed to save {0}: {1}", Name, ex);
-			}
-
+#if DEBUG
+			var writer = DebugUtil.GetTextWriter(m_client.Account);
+			writer.WriteLine("Failed to save {0}: {1}", Name, ex);
+#endif
 			LogUtil.ErrorException(ex, "Could not save Character " + this);
 		}
 

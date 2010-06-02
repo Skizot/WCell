@@ -15,13 +15,7 @@ namespace WCell.Core.Initialization
 		{
 		}
 
-		public InitializationException(string msg, params object[] args)
-			: base(string.Format(msg, args))
-		{
-		}
-
-		public InitializationException(Exception e, string msg, params object[] args)
-			: base(string.Format(msg, args), e)
+		public InitializationException(string msg, params object[] args) : base(string.Format(msg, args))
 		{
 		}
 	}

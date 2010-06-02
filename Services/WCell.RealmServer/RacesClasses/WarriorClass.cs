@@ -15,8 +15,6 @@
  *************************************************************************/
 
 using WCell.Constants;
-using WCell.RealmServer.Entities;
-
 namespace WCell.RealmServer.RacesClasses
 {
     /// <summary>
@@ -67,14 +65,15 @@ namespace WCell.RealmServer.RacesClasses
         /// <param name="level">the player's level</param>
         /// <param name="spirit">the player's Spirit</param>
         /// <returns>the total power regeneration amount</returns>
-        public override int CalculatePowerRegen(Character chr)
+        public override float CalculatePowerRegen(int level, int spirit, int intell)
         {
-            // 1 Rage in the client is 10
-			if (chr.IsInCombat)
-			{
-				return 0;
-			}
-            return -50;
+            // Rage in the client is 100 * 10
+            return -25f;
+        }
+
+        public override int CalculateHealthRegen(int level, int spirit)
+        {
+            return (int)(spirit * 0.50f) + 6;
         }
 
         /// <summary>

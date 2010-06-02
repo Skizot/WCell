@@ -16,7 +16,7 @@ namespace WCell.Intercommunication.DataTypes
 
 	[Serializable]
 	[DataContract]
-	public class RoleGroupInfo : IRoleGroup
+	public class RoleGroupInfo
 	{
 		/// <summary>
 		/// Represents the highest role that has been loaded (usually: Owner).

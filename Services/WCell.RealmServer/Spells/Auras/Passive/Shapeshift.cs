@@ -26,32 +26,31 @@ namespace WCell.RealmServer.Spells.Auras.Handlers
 	/// </summary>
 	public class ShapeshiftHandler : AuraEffectHandler
 	{
-		ShapeshiftForm form;
+		ShapeShiftForm form;
 
 		protected internal override void CheckInitialize(CasterInfo casterInfo, Unit target, ref SpellFailedReason failReason)
 		{
-			form = (ShapeshiftForm)SpellEffect.MiscValue;
-			if (target.ShapeshiftForm == form)
+			form = (ShapeShiftForm)SpellEffect.MiscValue;
+			if (target.ShapeShiftForm == form)
 			{
 				// stances can't be undone:
-				if (form != ShapeshiftForm.BattleStance &&
-					form != ShapeshiftForm.BerserkerStance &&
-					form != ShapeshiftForm.DefensiveStance)
+				if (form != ShapeShiftForm.BattleStance &&
+					form != ShapeShiftForm.BerserkerStance &&
+					form != ShapeShiftForm.DefensiveStance)
 				{
 					target.Auras.RemoveWhere(aura => aura.Spell.Id == m_spellEffect.Spell.Id);
-					failReason = SpellFailedReason.DontReport;
 				}
 			}
 		}
 
 		protected internal override void Apply()
 		{
-			Owner.ShapeshiftForm = form;
+			m_aura.Auras.Owner.ShapeShiftForm = form;
 		}
 
 		protected internal override void Remove(bool cancelled)
 		{
-			Owner.ShapeshiftForm = ShapeshiftForm.Normal;
+			m_aura.Auras.Owner.ShapeShiftForm = ShapeShiftForm.Normal;
 		}
 	}
 };

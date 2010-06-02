@@ -1,7 +1,8 @@
 using System.Collections.Generic;
 using System.Threading;
+using Cell.Core.Collections;
 
-namespace WCell.Util.Collections
+namespace WCell.RealmServer.Misc
 {
 	/// <summary>
 	/// Allows reusable uint Ids

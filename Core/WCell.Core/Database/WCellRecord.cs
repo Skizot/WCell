@@ -8,13 +8,12 @@ namespace WCell.Core.Database
 {
 	public class WCellRecord<T> : ActiveRecordBase<T> where T : ActiveRecordBase
 	{
-		private bool m_New;
-
 		public bool New
 		{
-			get { return m_New; }
-			set { m_New = value; }
+			get;
+			set;
 		}
+
 
 		#region Overrides
 		public override void Save()

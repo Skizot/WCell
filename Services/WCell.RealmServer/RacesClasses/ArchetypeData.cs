@@ -152,26 +152,26 @@ namespace WCell.RealmServer.RacesClasses
 
     	public int Agility
     	{
-			get { return Stats[(int)StatType.Agility]; }
-			set { Stats[(int)StatType.Agility] = value; }
+			get { return Stats[(int)StatType.Strength]; }
+			set { Stats[(int)StatType.Strength] = value; }
     	}
 
 		public int Stamina
 		{
-			get { return Stats[(int)StatType.Stamina]; }
-			set { Stats[(int)StatType.Stamina] = value; }
+			get { return Stats[(int)StatType.Strength]; }
+			set { Stats[(int)StatType.Strength] = value; }
 		}
 
 		public int Intellect
 		{
-			get { return Stats[(int)StatType.Intellect]; }
-			set { Stats[(int)StatType.Intellect] = value; }
+			get { return Stats[(int)StatType.Strength]; }
+			set { Stats[(int)StatType.Strength] = value; }
 		}
 
 		public int Spirit
 		{
-			get { return Stats[(int)StatType.Spirit]; }
-			set { Stats[(int)StatType.Spirit] = value; }
+			get { return Stats[(int)StatType.Strength]; }
+			set { Stats[(int)StatType.Strength] = value; }
 		}
 
         public void FinalizeDataHolder() 

@@ -13,7 +13,7 @@ using WCell.Util;
 namespace WCell.PacketAnalysis.Xml
 {
 	[XmlRoot("Definitions")]
-	public class XmlPacketDefinitions : XmlFile<XmlPacketDefinitions>
+	public class XmlPacketDefinitions : XmlConfig<XmlPacketDefinitions>
 	{
 		/// <summary>
 		/// Used for compliancy

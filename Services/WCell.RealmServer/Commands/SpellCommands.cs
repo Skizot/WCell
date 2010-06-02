@@ -14,12 +14,10 @@
  *
  *************************************************************************/
 
-using System;
 using WCell.Constants;
 using WCell.Constants.Spells;
 using WCell.Constants.Updates;
 using WCell.RealmServer.Entities;
-using WCell.RealmServer.Lang;
 using WCell.RealmServer.Spells;
 using WCell.Util.Commands;
 
@@ -64,7 +62,7 @@ namespace WCell.RealmServer.Commands
 		protected override void Initialize()
 		{
 			Init("spelladd", "addspell");
-			EnglishParamInfo = "";
+			ParamInfo = "";
 			EnglishDescription = "Deprecated - Use \"spell add\" instead.";
 		}
 
@@ -79,56 +77,6 @@ namespace WCell.RealmServer.Commands
 		}
 	}
 
-	#region GetSpell
-	public class SpellGetCommand : RealmServerCommand
-	{
-		public static Spell RetrieveSpell(CmdTrigger<RealmServerCmdArgs> trigger)
-		{
-			var pos = trigger.Text.Position;
-			var id = trigger.Text.NextEnum(SpellId.None);
-			Spell spell = SpellHandler.Get(id);
-
-			if (spell == null)
-			{
-				trigger.Text.Position = pos;
-				var lineid = trigger.Text.NextEnum(SpellLineId.None);
-				if (lineid != 0)
-				{
-					var line = SpellLines.GetLine(lineid);
-					if (line != null)
-					{
-						spell = line.HighestRank;
-					}
-				}
-			}
-			return spell;
-		}
-
-		protected override void Initialize()
-		{
-			Init("GetSpell", "SpellGet");
-			Description = new TranslatableItem(LangKey.CmdSpellGetDescription);
-			Description = new TranslatableItem(LangKey.CmdSpellGetParamInfo);
-		}
-
-		public override object Eval(CmdTrigger<RealmServerCmdArgs> trigger)
-		{
-			return RetrieveSpell(trigger);
-		}
-
-		public override void Process(CmdTrigger<RealmServerCmdArgs> trigger)
-		{
-			var spell = RetrieveSpell(trigger);
-			trigger.Reply(spell.ToString());
-		}
-
-		public override ObjectTypeCustom TargetTypes
-		{
-			get { return ObjectTypeCustom.None; }
-		}
-	}
-	#endregion
-
 	public class SpellCommand : RealmServerCommand
 	{
 		protected SpellCommand() { }
@@ -136,24 +84,28 @@ namespace WCell.RealmServer.Commands
 		protected override void Initialize()
 		{
 			Init("Spell", "Spells", "Sp");
-			EnglishParamInfo = "";
+			ParamInfo = "";
 			EnglishDescription = "Provides commands to interact with the Spells of the Target.";
 		}
 
 		#region Add
 		public class AddSpellCommand : SubCommand
 		{
-			public static AddSpellCommand Instance { get; private set; }
+			private static AddSpellCommand m_instance;
+			public static AddSpellCommand Instance
+			{
+				get { return m_instance; }
+			}
 
 			protected AddSpellCommand()
 			{
-				Instance = this;
+				m_instance = this;
 			}
 
 			protected override void Initialize()
 			{
 				Init("Add", "A");
-				EnglishParamInfo = "[-[r][c [<class>]]] [<spell> [<cooldown for AI>]]";
+				ParamInfo = "[-[r][c [<class>]]] [<spell> [<cooldown for AI>]]";
 				EnglishDescription = "Adds the given spell. " +
 									 "-r (Reagents) switch also adds all constraints required by the Spell (Tools, Reagents, Objects, Skills). " +
 									 "-c [<class>] adds all spells of the Character's or a given class." +
@@ -202,7 +154,8 @@ namespace WCell.RealmServer.Commands
 				}
 				else
 				{
-					var spell = SpellGetCommand.RetrieveSpell(trigger);
+					var id = trigger.Text.NextEnum(SpellId.None);
+					var spell = SpellHandler.Get(id);
 
 					if (spell != null)
 					{
@@ -249,7 +202,7 @@ namespace WCell.RealmServer.Commands
 			protected override void Initialize()
 			{
 				Init("Remove", "R");
-				EnglishParamInfo = "<spell>";
+				ParamInfo = "<spell>";
 				EnglishDescription = "Removes the given Spell";
 			}
 
@@ -290,7 +243,7 @@ namespace WCell.RealmServer.Commands
 				if (trigger.Args.Target.HasSpells)
 				{
 					trigger.Args.Target.Spells.Clear();
-					trigger.Args.Target.Spells.AddDefaultSpells();
+					trigger.Args.Target.Spells.AddDefaults();
 					trigger.Reply("Purged spells.");
 				}
 				else
@@ -311,7 +264,7 @@ namespace WCell.RealmServer.Commands
 			protected override void Initialize()
 			{
 				Init("Trigger", "T");
-				EnglishParamInfo = "<spellid>";
+				ParamInfo = "<spellid>";
 				EnglishDescription = "Triggers the given spell on the target of the command.";
 			}
 
@@ -336,7 +289,10 @@ namespace WCell.RealmServer.Commands
 
 		public override ObjectTypeCustom TargetTypes
 		{
-			get { return ObjectTypeCustom.Unit; }
+			get
+			{
+				return ObjectTypeCustom.Unit;
+			}
 		}
 	}
 
@@ -348,7 +304,7 @@ namespace WCell.RealmServer.Commands
 		protected override void Initialize()
 		{
 			Init("SpellVisual", "PlaySpellVisual", "SpellAnim");
-			EnglishParamInfo = "<SpellId>";
+			ParamInfo = "<SpellId>";
 			EnglishDescription = "Plays the visual of the given spell";
 		}
 

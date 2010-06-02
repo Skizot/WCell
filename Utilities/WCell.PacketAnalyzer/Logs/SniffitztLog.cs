@@ -29,7 +29,7 @@ namespace WCell.PacketAnalysis.Logs
 	[DesignerCategory("code")]
 	[XmlType(AnonymousType = true)]
 	[XmlRoot("sniffitztlog", Namespace = "", IsNullable = false)]
-	public class SniffitztLog : XmlFile<SniffitztLog>
+	public class SniffitztLog : XmlConfig<SniffitztLog>
 	{
 		/// <remarks/>
 		[XmlElement("header")]

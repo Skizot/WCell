@@ -7,7 +7,7 @@ namespace WCell.RealmServer.Lang
 	/// <summary>
 	/// 
 	/// </summary>
-	public static class ArrayLocalizer
+	public static class Localizer
 	{
 		public static string Localize(this string[] texts, IRealmClient client)
 		{
@@ -31,5 +31,37 @@ namespace WCell.RealmServer.Lang
 			}
 			return text;
 		}
+
+		//public static string Localize(IRealmClient client, string key)
+		//{
+		//    return key;
+		//}
+
+		//public static string Localize(Character chr, string key)
+		//{
+
+		//    return key;
+		//}
+
+		//public static string Localize(string locale, string key)
+		//{
+		//    return key;
+		//}
+
+		//public static string Localize(IRealmClient client, int key)
+		//{
+		//    return key.ToString();
+		//}
+
+		//public static string Localize(Character chr, int key)
+		//{
+
+		//    return key.ToString();
+		//}
+
+		//public static string Localize(string locale, int key)
+		//{
+		//    return key.ToString();
+		//}
 	}
 }

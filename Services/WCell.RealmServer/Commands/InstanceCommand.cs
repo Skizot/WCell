@@ -54,7 +54,7 @@ namespace WCell.RealmServer.Commands
 			protected override void Initialize()
 			{
 				Init("List", "L");
-				EnglishParamInfo = "[<MapId>]";
+				ParamInfo = "[<MapId>]";
 				EnglishDescription = "Lists all active Instances, or those of the given Map.";
 			}
 
@@ -102,7 +102,7 @@ namespace WCell.RealmServer.Commands
 				for (var i = 0; i < list.Count; i++)
 				{
 					var inst = list[i];
-					trigger.Reply(inst.ToString());
+					trigger.Reply(inst);
 				}
 			}
 		}
@@ -116,7 +116,7 @@ namespace WCell.RealmServer.Commands
 			protected override void Initialize()
 			{
 				Init("Create", "C");
-				EnglishParamInfo = "[-e] <MapId>";
+				ParamInfo = "[-e] <MapId>";
 				EnglishDescription = "Creates a new Instance of the given Map. -e enters it right away.";
 			}
 
@@ -173,7 +173,7 @@ namespace WCell.RealmServer.Commands
 			protected override void Initialize()
 			{
 				Init("Enter", "E");
-				EnglishParamInfo = "<MapId> <InstanceId> [<entrance>]";
+				ParamInfo = "<MapId> <InstanceId> [<entrance>]";
 			}
 
 			public override void Process(CmdTrigger<RealmServerCmdArgs> trigger)
@@ -196,7 +196,7 @@ namespace WCell.RealmServer.Commands
 			protected override void Initialize()
 			{
 				Init("Delete", "Del");
-				EnglishParamInfo = "[<MapId> <InstanceId>]";
+				ParamInfo = "[<MapId> <InstanceId>]";
 				EnglishDescription = "Delets the Instance of the given Map with the given Id, or the current one if no arguments are supplied.";
 			}
 

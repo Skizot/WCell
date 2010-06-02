@@ -151,12 +151,7 @@ namespace WCell.RealmServer.Taxi
 
 			foreach (var nodeList in nodeLists)
 			{
-				TaxiPath path;
-				if (!taxiPathReader.Entries.TryGetValue((int)nodeList.Key, out path))
-				{
-					continue;
-				}
-
+				var path = taxiPathReader.Entries[(int)nodeList.Key];
 				LinkedListNode<PathVertex> current = null;
 				float totalLength = 0;
 
@@ -328,11 +323,11 @@ namespace WCell.RealmServer.Taxi
 			}
 
 			// Cheat check -- can't fly shape-shifted
-			if (!(curChar.ShapeshiftForm == ShapeshiftForm.Normal ||
-				   curChar.ShapeshiftForm == ShapeshiftForm.BattleStance ||
-				   curChar.ShapeshiftForm == ShapeshiftForm.BerserkerStance ||
-				   curChar.ShapeshiftForm == ShapeshiftForm.DefensiveStance ||
-				   curChar.ShapeshiftForm == ShapeshiftForm.Shadow))
+			if (!(curChar.ShapeShiftForm == ShapeShiftForm.Normal ||
+				   curChar.ShapeShiftForm == ShapeShiftForm.BattleStance ||
+				   curChar.ShapeShiftForm == ShapeShiftForm.BerserkerStance ||
+				   curChar.ShapeShiftForm == ShapeShiftForm.DefensiveStance ||
+				   curChar.ShapeShiftForm == ShapeShiftForm.Shadow))
 			{
 				TaxiHandler.SendActivateTaxiReply(client, TaxiActivateResponse.PlayerShapeShifted);
 				return false;

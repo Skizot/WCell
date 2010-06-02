@@ -16,7 +16,7 @@ namespace WCell.RealmServer.Commands
 		protected override void Initialize()
 		{
 			base.Init("SpawnDO");
-			EnglishParamInfo = "<spellid> <radius> [<scale>]";
+			ParamInfo = "<spellid> <radius> [<scale>]";
 			EnglishDescription = "Spawns a new DynamicObjects with the given parameters";
 		}
 

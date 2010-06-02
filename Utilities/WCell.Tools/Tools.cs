@@ -86,7 +86,7 @@ namespace WCell.Tools
 			RealmServerConfiguration.Instance.AutoSave = false;
 			RealmServerConfiguration.ContentDirName = Path.GetFullPath(ToolConfig.ContentDir);
 			RealmServerConfiguration.Initialize();
-			RealmAddonMgr.AddonDir = ToolConfig.AddonDir;
+			RealmAddonMgr.AddonFolder = ToolConfig.AddonDir;
 
 			Console.WriteLine("Content Directory: " + new DirectoryInfo(RealmServ.Instance.Configuration.ContentDir).FullName);
 

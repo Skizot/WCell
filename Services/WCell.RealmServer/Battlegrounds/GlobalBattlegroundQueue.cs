@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-using WCell.Util.Collections;
+using Cell.Core.Collections;
 using WCell.RealmServer.Entities;
 using WCell.Constants;
 using WCell.RealmServer.GameObjects;

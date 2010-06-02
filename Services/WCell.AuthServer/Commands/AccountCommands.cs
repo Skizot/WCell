@@ -18,7 +18,7 @@ namespace WCell.AuthServer.Commands
 		protected override void Initialize()
 		{
 			Init("Account", "Acc");
-			EnglishParamInfo = "<name>|-i <id>";
+			ParamInfo = "<name>|-i <id>";
 			EnglishDescription = "Provides Commands to manage/manipulate Accounts. -i ";
 		}
 
@@ -37,7 +37,7 @@ namespace WCell.AuthServer.Commands
 						if (!trigger.Text.HasNext)
 						{
 							trigger.Reply("You did not specify an Account.");
-							trigger.Reply(subCmd.CreateUsage(trigger));
+							trigger.Reply(subCmd.Usage);
 							return;
 						}
 
@@ -82,17 +82,17 @@ namespace WCell.AuthServer.Commands
 		{
 			public virtual bool RequiresAccount { get { return true; } }
 
-			public override string CreateUsage(string paramInfo)
+			public override string CreateUsage(string usage)
 			{
 				if (RequiresAccount)
 				{
-					paramInfo = Aliases.ToString("|") + " (<AccountName>|-i <id>) " + " " + paramInfo;
-					paramInfo = m_parentCmd.CreateUsage(paramInfo);
-					return paramInfo;
+					usage = Aliases.ToString("|") + " (<AccountName>|-i <id>) " + " " + usage;
+					usage = m_parentCmd.CreateUsage(usage);
+					return usage;
 				}
 				else
 				{
-					return base.CreateUsage(paramInfo);
+					return base.CreateUsage(usage);
 				}
 			}
 		}
@@ -102,7 +102,7 @@ namespace WCell.AuthServer.Commands
 			protected override void Initialize()
 			{
 				Init("Add", "A", "Create");
-				EnglishParamInfo = "<AccountName> <PW> [<Role> [<email> [<clientId>]]]";
+				ParamInfo = "<AccountName> <PW> [<Role> [<email> [<clientId>]]]";
 				EnglishDescription = "Adds a new account with the given Name and PW and optionally specified Role and ClientId";
 			}
 
@@ -179,7 +179,7 @@ namespace WCell.AuthServer.Commands
 			protected override void Initialize()
 			{
 				Init("Delete", "Del");
-				EnglishParamInfo = "<ConfirmName>";
+				ParamInfo = "<ConfirmName>";
 				EnglishDescription = "Deletes the account with the given name. Type the name twice for confirmation.";
 			}
 
@@ -211,7 +211,7 @@ namespace WCell.AuthServer.Commands
 			protected override void Initialize()
 			{
 				Init("Info", "I");
-				EnglishParamInfo = "";
+				ParamInfo = "";
 				EnglishDescription = "Shows information about the given Account.";
 			}
 
@@ -233,7 +233,7 @@ namespace WCell.AuthServer.Commands
 			protected override void Initialize()
 			{
 				Init("SetProp", "Set", "S");
-				EnglishParamInfo = "<Property> <Value>";
+				ParamInfo = "<Property> <Value>";
 				EnglishDescription = "Sets the given Account property to the given value.";
 			}
 
@@ -258,7 +258,7 @@ namespace WCell.AuthServer.Commands
 				protected override void Initialize()
 				{
 					Init("Email", "Mail");
-					EnglishParamInfo = "<new@mail.address>";
+					ParamInfo = "<new@mail.address>";
 					EnglishDescription = "Changes the Account's EMail address.";
 				}
 
@@ -283,7 +283,7 @@ namespace WCell.AuthServer.Commands
 				protected override void Initialize()
 				{
 					Init("Pass", "PW", "Password");
-					EnglishParamInfo = "<pass>";
+					ParamInfo = "<pass>";
 					EnglishDescription = "Changes the Account's password.";
 				}
 
@@ -312,7 +312,7 @@ namespace WCell.AuthServer.Commands
 				protected override void Initialize()
 				{
 					Init("Role", "R");
-					EnglishParamInfo = "<RoleName>";
+					ParamInfo = "<RoleName>";
 					EnglishDescription = "Changes the Account's Role.";
 				}
 
@@ -339,7 +339,7 @@ namespace WCell.AuthServer.Commands
 				protected override void Initialize()
 				{
 					Init("ClientId", "C");
-					EnglishParamInfo = "<ClientId>";
+					ParamInfo = "<ClientId>";
 					EnglishDescription = "Changes the Account's ClientId.";
 				}
 
@@ -377,7 +377,7 @@ namespace WCell.AuthServer.Commands
 			protected override void Initialize()
 			{
 				Init("List", "L");
-				EnglishParamInfo = "<name-part>";
+				ParamInfo = "<name-part>";
 				EnglishDescription = "Lists all accounts whose name contains the given string. (Max: " + MaxListCount + ")";
 			}
 
@@ -426,7 +426,7 @@ namespace WCell.AuthServer.Commands
 					}
 					else
 					{
-						trigger.Reply(acc.ToString());
+						trigger.Reply(acc);
 					}
 				}
 
