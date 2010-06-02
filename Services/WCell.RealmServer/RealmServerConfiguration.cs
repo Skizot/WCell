@@ -54,7 +54,7 @@ namespace WCell.RealmServer
 			get { return s_instance; }
 		}
 
-		public override string FilePath
+		public override string Filename
 		{
 			get { return RealmServer.Instance.Configuration.GetFullPath(ConfigFilename); }
 			set
@@ -74,21 +74,7 @@ namespace WCell.RealmServer
 			set;
 		}
 
-		public static bool Loaded
-		{
-			get;
-			private set;
-		}
-
-		public static string LangDirName = "Lang";
-
-		public static string LangDir
-		{
-			get
-			{
-				return GetContentPath(LangDirName) + "/";
-			}
-		}
+		private static bool init;
 
 		private static ClientLocale defaultLocale = ClientLocale.English;
 
@@ -105,9 +91,9 @@ namespace WCell.RealmServer
 		[Initialization(InitializationPass.Config, "Initialize Config")]
 		public static bool Initialize()
 		{
-			if (!Loaded)
+			if (!init)
 			{
-				Loaded = true;
+				init = true;
 				BadWordString = "";
 
 				s_instance.AddVariablesOfAsm<VariableAttribute>(typeof(RealmServerConfiguration).Assembly);
@@ -117,7 +103,7 @@ namespace WCell.RealmServer
 					if (!s_instance.Load())
 					{
 						s_instance.Save(true, false);
-						log.Warn("Config-file \"{0}\" not found - Created new file.", Instance.FilePath);
+						log.Warn("Config-file \"{0}\" not found - Created new file.", Instance.Filename);
 						log.Warn("Please take a little time to configure your server and then restart the Application.");
 						log.Warn("See http://wiki.wcell.org/index.php/Configuration for more information.");
 						return false;
@@ -438,11 +424,11 @@ namespace WCell.RealmServer
 
 		public static string GetDBCFile(string filename)
 		{
+			var path = Path.Combine(Instance.DBCFolder, filename);
 			if (!filename.EndsWith(".dbc", StringComparison.InvariantCultureIgnoreCase))
 			{
 				filename += ".dbc";
 			}
-			var path = Path.Combine(Instance.DBCFolder, filename);
 
 			if (!File.Exists(path))
 			{
@@ -453,7 +439,6 @@ namespace WCell.RealmServer
 
 			return path;
 		}
-
 
 		public static string GetContentPath(string file)
 		{

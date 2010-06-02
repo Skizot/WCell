@@ -577,7 +577,7 @@ namespace WCell.Util.Commands
 				{
 					if (MayDisplay(trigger, cmd, ignoreRestrictions))
 					{
-						trigger.Reply(cmd.CreateUsage(trigger));
+						trigger.Reply(cmd.Usage);
 					}
 				}
 			}
@@ -590,7 +590,7 @@ namespace WCell.Util.Commands
 
 		public void DisplayCmd(CmdTrigger<C> trigger, BaseCommand<C> cmd, bool ignoreRestrictions, bool detail)
 		{
-			trigger.Reply(string.Format("{0}{1}", cmd.CreateUsage(trigger), detail ? " (" + cmd.GetDescription(trigger) + ")" : ""));
+			trigger.Reply(string.Format("{0}{1}", cmd.Usage, detail ? " (" + cmd.EnglishDescription + ")" : ""));
 
 			if (cmd.SubCommands.Count > 0)
 			{
@@ -711,7 +711,7 @@ namespace WCell.Util.Commands
 			protected override void Initialize()
 			{
 				Init("Call", "C", "@", "$");
-				EnglishParamInfo = "(-l [<wildmatch>]|-<i>)|<methodname>[ <arg0> [<arg1> [...]]]";
+				ParamInfo = "(-l [<wildmatch>]|-<i>)|<methodname>[ <arg0> [<arg1> [...]]]";
 				EnglishDescription = "Calls any static method or custom function with the given arguments. Either use the name or the index of the function.";
 			}
 
@@ -729,7 +729,7 @@ namespace WCell.Util.Commands
 				var txt = trigger.Text;
 				if (!txt.HasNext)
 				{
-					trigger.Reply("Invalid arguments - " + CreateInfo(trigger));
+					trigger.Reply("Invalid arguments - " + CreateInfo());
 				}
 				else
 				{
@@ -738,7 +738,7 @@ namespace WCell.Util.Commands
 					{
 						if (!txt.HasNext)
 						{
-							trigger.Reply("Invalid arguments - " + CreateInfo(trigger));
+							trigger.Reply("Invalid arguments - " + CreateInfo());
 							return;
 						}
 
@@ -858,7 +858,7 @@ namespace WCell.Util.Commands
 			protected override void Initialize()
 			{
 				Init("Help", "?");
-				EnglishParamInfo = "[<part of cmd> [[<part of subcmd>] <part of subcmd> ...]]";
+				ParamInfo = "[<part of cmd> [[<part of subcmd>] <part of subcmd> ...]]";
 				EnglishDescription = "Shows an overview over all Commands or -if specified- the help for a specific Command (and its subcommands).";
 			}
 
@@ -892,7 +892,7 @@ namespace WCell.Util.Commands
 			protected override void Initialize()
 			{
 				Init("ExecFile");
-				EnglishParamInfo = "<filename>";
+				ParamInfo = "<filename>";
 				EnglishDescription = "Executes the given file.";
 			}
 
@@ -962,7 +962,7 @@ namespace WCell.Util.Commands
 		//                if (value.Length == 0)
 		//                {
 		//                    trigger.Reply("Invalid value:");
-		//                    trigger.Reply(CreateInfo(trigger));
+		//                    trigger.Reply(CreateInfo());
 		//                }
 		//                else
 		//                {
@@ -995,7 +995,7 @@ namespace WCell.Util.Commands
 		//            else
 		//            {
 		//                trigger.Reply("Invalid arguments:");
-		//                trigger.Reply(CreateInfo(trigger));
+		//                trigger.Reply(CreateInfo());
 		//            }
 		//        }
 		//    }
@@ -1040,7 +1040,7 @@ namespace WCell.Util.Commands
 		//            else
 		//            {
 		//                trigger.Reply("Invalid arguments:");
-		//                trigger.Reply(CreateInfo(trigger));
+		//                trigger.Reply(CreateInfo());
 		//            }
 		//        }
 		//    }

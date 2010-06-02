@@ -6,7 +6,6 @@ using Cell.Core;
 using NLog;
 using WCell.Constants.Updates;
 using WCell.Core;
-using WCell.RealmServer.Lang;
 using WCell.Util.Threading;
 using WCell.Core.Variables;
 using WCell.RealmServer.Entities;
@@ -37,7 +36,7 @@ namespace WCell.RealmServer.Commands
 		protected override void Initialize()
 		{
 			Init("Shutdown");
-			EnglishParamInfo = "[<delay before shutdown in seconds>]";
+			ParamInfo = "[<delay before shutdown in seconds>]";
 			EnglishDescription = "Shuts down the server after the given delay (default = 10s). " +
 				"Once started, calling this command again will cancel the shutdown-sequence.";
 		}
@@ -65,7 +64,7 @@ namespace WCell.RealmServer.Commands
 		protected override void Initialize()
 		{
 			Init("Broadcast");
-			EnglishParamInfo = "<text>";
+			ParamInfo = "<text>";
 			EnglishDescription = "Broadcasts the given text throughout the world.";
 		}
 
@@ -85,7 +84,7 @@ namespace WCell.RealmServer.Commands
 		protected override void Initialize()
 		{
 			Init("Kick", "Boot");	// the aliases for this command
-			EnglishParamInfo = "[-n <name>][-d <seconds>] [<reason>]";
+			ParamInfo = "[-n <name>][-d <seconds>] [<reason>]";
 			EnglishDescription = "Kicks your current target with an optional delay in seconds (default: 20 - can be 0) and an optional reason.";
 		}
 
@@ -99,31 +98,16 @@ namespace WCell.RealmServer.Commands
 			else
 			{
 				var chr = trigger.Args.Target as Character;
-
-				var mod = trigger.Text.NextModifiers();
 				if (chr == null)
 				{
-					if (!mod.Contains("n") || !trigger.Text.HasNext)
-					{
-						trigger.Reply(LangKey.CmdKickMustProvideName);
-						return;
-					}
-					else
-					{
-						var name = trigger.Text.NextWord();
-						chr = World.GetCharacter(name, false);
-						if (chr == null)
-						{
-							trigger.Reply(LangKey.PlayerNotOnline, name);
-							return;
-						}
-					}
+					
 				}
 
 				var delay = Character.DefaultLogoutDelay;
 
 				// check for different delay
-				if (mod.Contains("d"))
+				var mod = trigger.Text.NextModifiers();
+				if (mod == "d")
 				{
 					delay = trigger.Text.NextFloat(delay);
 				}
@@ -152,7 +136,7 @@ namespace WCell.RealmServer.Commands
 		protected override void Initialize()
 		{
 			Init("Ban");
-			EnglishParamInfo = "[-[smhdw] [<seconds>] [<minutes>] [<hours>] [<days>] [<weeks>]]";
+			ParamInfo = "[-[smhdw] [<seconds>] [<minutes>] [<hours>] [<days>] [<weeks>]]";
 			EnglishDescription = "Deactivates the given Account. Reactivation time can optionally also be specified.";
 		}
 
@@ -239,7 +223,7 @@ namespace WCell.RealmServer.Commands
 		protected override void Initialize()
 		{
 			Init("SetRole", "Role", "SetPriv");
-			EnglishParamInfo = "<RoleName>";
+			ParamInfo = "<RoleName>";
 			EnglishDescription = "Sets the Account's Role which determines the User's rights and privileges.";
 		}
 
@@ -307,7 +291,7 @@ namespace WCell.RealmServer.Commands
 		protected override void Initialize()
 		{
 			Init("Global");
-			EnglishParamInfo = "[-pi] <command + command args>";
+			ParamInfo = "[-pi] <command + command args>";
 			EnglishDescription = "Executes the given command on everyone ingame. Use carefully! " +
 				"-p Only on Players (exclude staff members). " +
 				"-i Include self";
@@ -398,7 +382,7 @@ namespace WCell.RealmServer.Commands
 			protected override void Initialize()
 			{
 				Init("Set", "S");
-				EnglishParamInfo = "<globalVar> <value>";
+				ParamInfo = "<globalVar> <value>";
 				EnglishDescription = "Sets the value of the given global variable.";
 			}
 
@@ -422,7 +406,7 @@ namespace WCell.RealmServer.Commands
 			protected override void Initialize()
 			{
 				Init("Get", "G");
-				EnglishParamInfo = "<globalVar>";
+				ParamInfo = "<globalVar>";
 				EnglishDescription = "Gets the value of the given global variable.";
 			}
 
@@ -446,7 +430,7 @@ namespace WCell.RealmServer.Commands
 			protected override void Initialize()
 			{
 				Init("List", "L");
-				EnglishParamInfo = "[<name Part>]";
+				ParamInfo = "[<name Part>]";
 				EnglishDescription = "Lists all global variables. If specified only shows variables that contain the given name Part.";
 			}
 
@@ -470,7 +454,7 @@ namespace WCell.RealmServer.Commands
 			protected override void Initialize()
 			{
 				Init("Save");
-				EnglishParamInfo = "";
+				ParamInfo = "";
 				EnglishDescription = "Saves the current configuration.";
 			}
 
@@ -495,7 +479,7 @@ namespace WCell.RealmServer.Commands
 			protected override void Initialize()
 			{
 				Init("Load");
-				EnglishParamInfo = "";
+				ParamInfo = "";
 				EnglishDescription = "Loads the configuration again.";
 			}
 
@@ -523,7 +507,7 @@ namespace WCell.RealmServer.Commands
 		protected override void Initialize()
 		{
 			Init("AuthRemote", "Auth");
-			EnglishParamInfo = "<Command <args>>";
+			ParamInfo = "<Command <args>>";
 			EnglishDescription = "Executes a command on the AuthServer.";
 		}
 
@@ -576,7 +560,7 @@ namespace WCell.RealmServer.Commands
 			protected override void Initialize()
 			{
 				Init("List", "L");
-				EnglishParamInfo = "[<match>]";
+				ParamInfo = "[<match>]";
 			}
 
 			public override void Process(CmdTrigger<RealmServerCmdArgs> trigger)
@@ -617,7 +601,7 @@ namespace WCell.RealmServer.Commands
 			protected override void Initialize()
 			{
 				Init("Show", "S");
-				EnglishParamInfo = "[<index>]";
+				ParamInfo = "[<index>]";
 				EnglishDescription = "If no index is given, will show the last Exception.";
 			}
 
@@ -682,7 +666,7 @@ namespace WCell.RealmServer.Commands
 		protected override void Initialize()
 		{
 			Init("IPC");
-			EnglishParamInfo = "[0/1]";
+			ParamInfo = "[0/1]";
 			//Description = "Provides commands to manage the IPC-device that connects Realm- and Auth-Server. Use -0 to turn it off and -1 to turn it on.";
 			EnglishDescription = "Toggles the IPC-device that connects Realm- and Auth-Server.";
 		}
@@ -727,8 +711,7 @@ namespace WCell.RealmServer.Commands
 
 			RealmServer.Instance.AuthClient.IsRunning = run;
 
-			//trigger.Reply("Done. - IPC-Client is now {0}.", run ? "Online" : "Offline");
-			trigger.Reply("Done.");
+			trigger.Reply("Done. - IPC-Client is now {0}.", run ? "Online" : "Offline");
 			//base.Process(trigger);
 		}
 	}
@@ -768,7 +751,7 @@ namespace WCell.RealmServer.Commands
 			protected override void Initialize()
 			{
 				base.Init("ToggleLevel", "Level", "Lvl", "TL");
-				EnglishParamInfo = "<Trace|Debug|Info|Warn|Error|Fatal> [<1/0>]";
+				ParamInfo = "<Trace|Debug|Info|Warn|Error|Fatal> [<1/0>]";
 				EnglishDescription = "Globally toggles whether messages of the corresponding level should be logged (to console, as well as to file or any other target that is specified).";
 			}
 

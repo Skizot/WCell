@@ -335,6 +335,45 @@ namespace WCell.RealmServer.Spells
 		public SpellLine Line;
 		#endregion
 
+		#region Spell Variables (that may be modified by spell customizations)
+		public bool CanCastOnPlayer = true;
+
+		/// <summary>
+		/// Whether this is a Spell that is only used to prevent other Spells (cannot be cancelled etc)
+		/// </summary>
+		public bool IsPreventionDebuff;
+
+		/// <summary>
+		/// Whether this is an Aura that can override other instances of itself if they have the same rank (true by default)
+		/// </summary>
+		public bool CanOverrideEqualAuraRank = true;
+
+		/// <summary>
+		/// Spells casted whenever this Spell is casted
+		/// </summary>
+		public Spell[] TargetTriggerSpells, CasterTriggerSpells;
+
+		/// <summary>
+		/// Set of specific Spells which, when used, can proc this Spell.
+		/// </summary>
+		public HashSet<Spell> CasterProcSpells;
+
+		/// <summary>
+		/// Set of specific Spells which can proc this Spell on their targets.
+		/// </summary>
+		public HashSet<Spell> TargetProcSpells;
+
+		/// <summary>
+		/// ProcHandlers to be added to the caster of this Spell
+		/// </summary>
+		public List<ProcHandlerTemplate> CasterProcHandlers;
+
+		/// <summary>
+		/// ProcHandlers to be added to the targets of this Spell
+		/// </summary>
+		public List<ProcHandlerTemplate> TargetProcHandlers;
+		#endregion
+
 		#region Trigger Spells
 		/// <summary>
 		/// Add Spells to be casted on the targets of this Spell
@@ -411,7 +450,7 @@ namespace WCell.RealmServer.Spells
 
 		#region Proc Spells
 		/// <summary>
-		/// Add Spells which, when used, can proc this Spell  on the caster
+		/// Add Spells which, when used, can proc this Spell 
 		/// </summary>
 		public void AddCasterProcSpells(params SpellId[] spellIds)
 		{
@@ -430,7 +469,7 @@ namespace WCell.RealmServer.Spells
 		}
 
 		/// <summary>
-		/// Add Spells which, when used, can proc this Spell on the caster 
+		/// Add Spells which, when used, can proc this Spell 
 		/// </summary>
 		public void AddCasterProcSpells(params SpellLineId[] spellSetIds)
 		{
@@ -444,7 +483,7 @@ namespace WCell.RealmServer.Spells
 		}
 
 		/// <summary>
-		/// Add Spells which, when used, can proc this Spell on the caster
+		/// Add Spells which, when used, can proc this Spell 
 		/// </summary>
 		public void AddCasterProcSpells(params Spell[] spells)
 		{
@@ -500,7 +539,7 @@ namespace WCell.RealmServer.Spells
 				TargetProcSpells = new HashSet<Spell>();
 			}
 			TargetProcSpells.AddRange(spells);
-			ProcTriggerFlags |= ProcTriggerFlags.SpellHit;
+			ProcTriggerFlags |= ProcTriggerFlags.SpellCast;
 		}
 		#endregion
 
@@ -659,8 +698,6 @@ namespace WCell.RealmServer.Spells
 			IsStrikeSpell = HasEffectWith(effect => effect.IsStrikeEffect);
 
 			IsWeaponAbility = IsRangedAbility || IsOnNextStrike || IsStrikeSpell;
-
-			DamageIncreasedByAP = DamageIncreasedByAP || (PowerType == PowerType.Rage && SchoolMask == DamageSchoolMask.Physical);
 
 			IsFinishingMove =
 				AttributesEx.HasAnyFlag(SpellAttributesEx.FinishingMove) ||
@@ -870,21 +907,6 @@ namespace WCell.RealmServer.Spells
 			return null;
 		}
 
-		/// <summary>
-		/// Returns the first SpellEffect of the given Type within this Spell
-		/// </summary>
-		public SpellEffect GetEffect(AuraType type)
-		{
-			foreach (var effect in Effects)
-			{
-				if (effect.AuraType == type)
-				{
-					return effect;
-				}
-			}
-			return null;
-		}
-
 		public SpellEffect GetFirstEffectWith(Predicate<SpellEffect> predicate)
 		{
 			foreach (var effect in Effects)
@@ -983,25 +1005,6 @@ namespace WCell.RealmServer.Spells
 		public SpellEffect AddTriggerSpellEffect(SpellId triggerSpell, ImplicitTargetType targetType)
 		{
 			var effect = AddEffect(SpellEffectType.TriggerSpell);
-			effect.TriggerSpellId = triggerSpell;
-			effect.ImplicitTargetA = targetType;
-			return effect;
-		}
-
-		/// <summary>
-		/// Adds a SpellEffect that will trigger the given Spell on oneself
-		/// </summary>
-		public SpellEffect AddPeriodicTriggerSpellEffect(SpellId triggerSpell)
-		{
-			return AddPeriodicTriggerSpellEffect(triggerSpell, ImplicitTargetType.Self);
-		}
-
-		/// <summary>
-		/// Adds a SpellEffect that will trigger the given Spell on the given type of target
-		/// </summary>
-		public SpellEffect AddPeriodicTriggerSpellEffect(SpellId triggerSpell, ImplicitTargetType targetType)
-		{
-			var effect = AddAuraEffect(AuraType.PeriodicTriggerSpell);
 			effect.TriggerSpellId = triggerSpell;
 			effect.ImplicitTargetA = targetType;
 			return effect;
@@ -1152,6 +1155,44 @@ namespace WCell.RealmServer.Spells
 				millis = chr.PlayerSpells.GetModifiedInt(SpellModifierType.Duration, this, millis);
 			}
 			return millis;
+		}
+		#endregion
+
+		#region Procs
+		public bool CanProcBeTriggeredBy(IUnitAction action, bool active)
+		{
+			if (active)
+			{
+				if (CasterProcSpells != null)
+				{
+					return action.Spell != null && CasterProcSpells.Contains(action.Spell);
+				}
+			}
+			else if (TargetProcSpells != null)
+			{
+				return action.Spell != null && TargetProcSpells.Contains(action.Spell);
+			}
+			
+			if (RequiredItemClass != ItemClass.None)
+			{
+				// check for weapon
+				if (!(action is AttackAction))
+				{
+					return false;
+				}
+
+				var aAction = (AttackAction)action;
+				if (aAction.Weapon == null || !(aAction.Weapon is Item))
+				{
+					return false;
+				}
+
+				var weapon = ((Item)aAction.Weapon).Template;
+
+			    return weapon.Class == RequiredItemClass &&
+			           (RequiredItemSubClassMask == 0 || weapon.SubClassMask.HasFlag(RequiredItemSubClassMask));
+			}
+			return true;
 		}
 		#endregion
 

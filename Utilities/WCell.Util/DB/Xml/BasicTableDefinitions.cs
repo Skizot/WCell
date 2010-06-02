@@ -7,7 +7,7 @@ using System.Xml.Serialization;
 namespace WCell.Util.DB.Xml
 {
 	[XmlRoot("Tables")]
-	public class BasicTableDefinitions : XmlFile<BasicTableDefinitions>
+	public class BasicTableDefinitions : XmlConfig<BasicTableDefinitions>
 	{
 		[XmlElement]
 		public DefVersion DBVersion

@@ -1,7 +1,16 @@
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
 using WCell.AuthServer.Commands;
 using WCell.Core.Addons;
+
+using WCell.Core;
+using WCell.Constants;
 using WCell.Core.Initialization;
 using NLog;
+using System.IO;
+using WCell.Util.Variables;
 
 namespace WCell.AuthServer.Addons
 {
@@ -12,7 +21,7 @@ namespace WCell.AuthServer.Addons
 	{
 		static readonly Logger log = LogManager.GetCurrentClassLogger();
 
-		public static string AddonDir = "AuthServerAddons";
+		public static string AddonFolder = "AuthServerAddons";
 
 		//[Variable("IgnoredAddonFiles")]
 		public static string IgnoredAddonFiles = "";
@@ -20,7 +29,7 @@ namespace WCell.AuthServer.Addons
 		[Initialization(InitializationPass.First, "Initialize Addons")]
 		public static void Initialize(InitMgr mgr)
 		{
-			LoadAddons(AddonDir, IgnoredAddonFiles);
+			LoadAddons(AddonFolder, IgnoredAddonFiles);
 
 			if (Contexts.Count > 0)
 			{

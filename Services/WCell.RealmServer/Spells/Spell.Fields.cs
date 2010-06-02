@@ -15,7 +15,6 @@
  *************************************************************************/
 
 using System;
-using System.Collections.Generic;
 using WCell.Constants;
 using WCell.Constants.Items;
 using WCell.Constants.Spells;
@@ -311,6 +310,8 @@ namespace WCell.RealmServer.Spells
 		/// </summary>
 		/// <remarks>Added in 3.1.0</remarks>
 		public int PowerDisplayId;
+
+		public Vector3 SpellTargetLocation;
 
 		[NotPersistent]
 		public DamageSchool[] Schools;

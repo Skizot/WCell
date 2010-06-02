@@ -102,10 +102,10 @@ namespace WCell.Util
 	/// &lt;/MyConfig&gt;
 	/// </code>
 	/// </example>
-	public class XmlFile<T> : XmlFileBase
-		where T : XmlFileBase
+	public class XmlConfig<T> : XmlConfigBase
+		where T : XmlConfigBase
 	{
-		protected XmlFile()
+		protected XmlConfig()
 		{
 		}
 
@@ -113,12 +113,12 @@ namespace WCell.Util
 		/// Constructor.
 		/// </summary>
 		/// <param name="fileName">The name of the configuration file.</param>
-		public XmlFile(string fileName)
+		public XmlConfig(string fileName)
 		{
 			m_filename = fileName;
 		}
 
-		public XmlFile(XmlFileBase parentConfig)
+		public XmlConfig(XmlConfigBase parentConfig)
 		{
 			m_parentConfig = parentConfig;
 		}
@@ -236,7 +236,7 @@ namespace WCell.Util
 				cfg = (T)ser.Deserialize(rdr);
 			}
 			cfg.FileName = filename;
-			(((XmlFile<T>)(XmlFileBase)cfg)).OnLoad();
+			(((XmlConfig<T>)(XmlConfigBase)cfg)).OnLoad();
 			return cfg;
 		}
 
@@ -290,13 +290,13 @@ namespace WCell.Util
 		}
 	}
 
-	public abstract class XmlFileBase
+	public abstract class XmlConfigBase
 	{
 		/// <summary>
 		/// The file name of the configuration file.
 		/// </summary>
 		protected string m_filename;
-		protected XmlFileBase m_parentConfig;
+		protected XmlConfigBase m_parentConfig;
 
 		[XmlIgnore]
 		public string FileName

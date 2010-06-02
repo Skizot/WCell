@@ -28,9 +28,9 @@ namespace WCell.RealmServer.Spells
 			SetupSpellLines();
 		}
 
-		static void AddSpellLines(ClassId clss, SpellLine[] lines)
+		static void AddSpellLines(SpellLine[] lines)
 		{
-			SpellLinesByClass[(int)clss] = lines;
+			SpellLinesByClass[(int)lines[0].ClassId] = lines;
 			foreach (var line in lines)
 			{
 				ById[(int)line.LineId] = line;

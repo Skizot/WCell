@@ -253,7 +253,7 @@ namespace WCell.RealmServer.Spells
 			}
 		}
 
-		public virtual void AddDefaultSpells()
+		public virtual void AddDefaults()
 		{
 		}
 

@@ -1,15 +1,11 @@
 using WCell.Constants.Updates;
-using WCell.RealmServer.Lang;
 using WCell.Util.Commands;
 using WCell.Intercommunication.DataTypes;
-using WCell.Util.Lang;
 
 namespace WCell.RealmServer.Commands
 {
 	public abstract class RealmServerCommand : Command<RealmServerCmdArgs>
 	{
-		public TranslatableItem Description;
-		public TranslatableItem ParamInfo;
 
 		/// <summary>
 		/// The kind of target that is required for this command 
@@ -71,7 +67,7 @@ namespace WCell.RealmServer.Commands
 			}
 			else
 			{
-				trigger.Reply(LangKey.SubCommandNotFound, subAlias);
+				trigger.Reply("SubCommand not found: " + subAlias);
 				trigger.Text.Skip(trigger.Text.Length);
 				mgr.DisplayCmd(trigger, this);
 			}
@@ -86,55 +82,16 @@ namespace WCell.RealmServer.Commands
 			}
 			else if (!silent)
 			{
-				trigger.Reply(LangKey.MustNotUseCommand, cmd.Name);
+				trigger.Reply("You are not allowed to use that Command.");
 			}
 			return false;
 		}
 
-		public override string GetDescription(CmdTrigger<RealmServerCmdArgs> trigger)
-		{
-			if (Description == null)
-			{
-				return base.GetDescription(trigger);
-			}
-			return trigger.Translate(Description);
-		}
-
-		public override string GetParamInfo(CmdTrigger<RealmServerCmdArgs> trigger)
-		{
-			if (ParamInfo == null)
-			{
-				return base.GetParamInfo(trigger);
-			}
-			return trigger.Translate(ParamInfo);
-		}
-
 		public abstract new class SubCommand : BaseCommand<RealmServerCmdArgs>.SubCommand
 		{
-			public TranslatableItem Description;
-			public TranslatableItem ParamInfo;
-
 			public virtual RoleStatus DefaultRequiredStatus
 			{
 				get { return ((RealmServerCommand)m_parentCmd).RequiredStatusDefault; }
-			}
-
-			public override string GetDescription(CmdTrigger<RealmServerCmdArgs> trigger)
-			{
-				if (Description == null)
-				{
-					return base.GetDescription(trigger);
-				}
-				return trigger.Translate(Description);
-			}
-
-			public override string GetParamInfo(CmdTrigger<RealmServerCmdArgs> trigger)
-			{
-				if (ParamInfo == null)
-				{
-					return base.GetParamInfo(trigger);
-				}
-				return trigger.Translate(ParamInfo);
 			}
 		}
 	}

@@ -23,7 +23,7 @@ namespace WCell.RealmServer.Commands
 			protected override void Initialize()
 			{
 				Init("Read", "S");
-				EnglishParamInfo = "";
+				ParamInfo = "";
 				EnglishDescription = "Read all mails";
 			}
 
@@ -43,7 +43,7 @@ namespace WCell.RealmServer.Commands
 			protected override void Initialize()
 			{
 				Init("Send", "S");
-				EnglishParamInfo = "[-i[c][m] <ItemId> [<CoD>] [<money>]] <receiver> <subject>, <text>";
+				ParamInfo = "[-i[c][m] <ItemId> [<CoD>] [<money>]] <receiver> <subject>, <text>";
 			}
 
 			public override void Process(CmdTrigger<RealmServerCmdArgs> trigger)

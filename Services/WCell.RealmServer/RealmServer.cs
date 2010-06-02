@@ -23,7 +23,6 @@ using Cell.Core;
 using WCell.Constants;
 using WCell.Constants.Login;
 using WCell.Core;
-using WCell.RealmServer.Localization;
 using WCell.Util.Graphics;
 using WCell.Util.Threading;
 using WCell.Intercommunication.DataTypes;
@@ -198,7 +197,7 @@ namespace WCell.RealmServer
 		/// </summary>
 		private void ConnectToAuthService()
 		{
-			m_authServiceClient.StartConnect(RealmServerConfiguration.AuthenticationServerAddress);
+			m_authServiceClient.Connect(RealmServerConfiguration.AuthenticationServerAddress);
 		}
 
 		internal void OnStatusChange(RealmStatus oldStatus)
@@ -271,11 +270,10 @@ namespace WCell.RealmServer
 		}
 
 		/// <summary>
-		/// 
+		/// Does nothing atm
 		/// </summary>
-		internal void UnregisterRealm()
+		public void UnregisterRealm()
 		{
-			log.Info(Resources.IPCProxyDisconnected);
 		}
 		#endregion
 
@@ -551,7 +549,7 @@ namespace WCell.RealmServer
 		{
 			if (m_authServiceClient != null)
 			{
-				m_authServiceClient.IsRunning = false;
+				m_authServiceClient.Disconnect(true);
 			}
 
 			base.Stop();

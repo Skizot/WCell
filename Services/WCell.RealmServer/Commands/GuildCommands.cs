@@ -22,7 +22,7 @@ namespace WCell.RealmServer.Commands
 			protected override void Initialize()
 			{
 				Init("Create", "C");
-				EnglishParamInfo = "[-[n <leadername>]] <name>";
+				ParamInfo = "[-[n <leadername>]] <name>";
 				EnglishDescription = "Create a guild with given name. " +
 					"-n allows you to select the leader by name.";
 			}
@@ -92,7 +92,7 @@ namespace WCell.RealmServer.Commands
 			protected override void Initialize()
 			{
 				Init("Add", "A");
-				EnglishParamInfo = "[-[n <membername>]] <name>";
+				ParamInfo = "[-[n <membername>]] <name>";
 				EnglishDescription = "Let somebody join the guild with the given name. " +
 					"-n allows you to select the new member by name.";
 			}
@@ -149,7 +149,7 @@ namespace WCell.RealmServer.Commands
 			protected override void Initialize()
 			{
 				Init("Leave", "L");
-				EnglishParamInfo = "[-[n <membername>]] <name>";
+				ParamInfo = "[-[n <membername>]] <name>";
 				EnglishDescription = "Let somebody leave the guild with the given name. " +
 					"-n allows you to select the member by name.";
 			}
@@ -207,7 +207,7 @@ namespace WCell.RealmServer.Commands
 			protected override void Initialize()
 			{
 				Init("List", "L");
-				EnglishParamInfo = "[<searchterm>]";
+				ParamInfo = "[<searchterm>]";
 				EnglishDescription = "Lists all Guild or only those with a matching name.";
 			}
 
@@ -235,7 +235,7 @@ namespace WCell.RealmServer.Commands
 					trigger.Reply("{0} Guilds found:", count);
 					foreach (var guild in guilds)
 					{
-						trigger.Reply(guild.ToString());
+						trigger.Reply(guild);
 					}
 				}
 			}
@@ -248,7 +248,7 @@ namespace WCell.RealmServer.Commands
 			protected override void Initialize()
 			{
 				Init("Disband", "D");
-				EnglishParamInfo = "<name> <name confirm>";
+				ParamInfo = "<name> <name confirm>";
 				EnglishDescription = "Disbands the guild with the given name.";
 			}
 
@@ -283,7 +283,7 @@ namespace WCell.RealmServer.Commands
 			protected override void Initialize()
 			{
 				Init("Say", "Msg");
-				EnglishParamInfo = "[-n <name>] <text>";
+				ParamInfo = "[-n <name>] <text>";
 				EnglishDescription = "Sends the given text to your, your target's or the specified Guild. -n can be ommited if not used by/on a Character.";
 			}
 

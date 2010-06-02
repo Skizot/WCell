@@ -561,7 +561,7 @@ namespace WCell.RealmServer.Spells
 				selected = Caster;
 			}
 			// 0x18A02
-            if (TargetFlags.HasAnyFlag(
+            if (TargetFlags.HasFlag(
 				SpellTargetFlags.SpellTargetFlag_Dynamic_0x10000 |
 				SpellTargetFlags.Corpse |
 				SpellTargetFlags.Object |
@@ -593,13 +593,13 @@ namespace WCell.RealmServer.Spells
 				}
 			}
 			// 0x20
-            if (TargetFlags.HasAnyFlag(SpellTargetFlags.SourceLocation))
+            if (TargetFlags.HasFlag(SpellTargetFlags.SourceLocation))
 			{
 				region.GetObject(packet.ReadPackedEntityId());		// since 3.2.0
 				SourceLoc = new Vector3(packet.ReadFloat(), packet.ReadFloat(), packet.ReadFloat());
 			}
 			// 0x40
-            if (TargetFlags.HasAnyFlag(SpellTargetFlags.DestinationLocation))
+            if (TargetFlags.HasFlag(SpellTargetFlags.DestinationLocation))
 			{
 				selected = region.GetObject(packet.ReadPackedEntityId());
 				TargetLoc = new Vector3(packet.ReadFloat(), packet.ReadFloat(), packet.ReadFloat());
@@ -607,7 +607,7 @@ namespace WCell.RealmServer.Spells
 				targetFound = true;
 			}
 			// 0x2000
-            if (TargetFlags.HasAnyFlag(SpellTargetFlags.String))
+            if (TargetFlags.HasFlag(SpellTargetFlags.String))
 			{
 				StringTarget = packet.ReadCString();
 			}
@@ -1399,7 +1399,6 @@ namespace WCell.RealmServer.Spells
 		}
 
 		/// <summary>
-		/// Creates a new SpellCast object to trigger the given spell.
 		/// Validates whether the given target is the correct target
 		/// or if we have to look for the actual targets ourselves.
 		/// Revalidate targets, if it is:
@@ -1409,17 +1408,12 @@ namespace WCell.RealmServer.Spells
 		/// </summary>
 		/// <param name="spell"></param>
 		/// <param name="target"></param>
-		public void ValidateAndTriggerNew(Spell spell, WorldObject target)
+		public void ValidateAndTrigger(Spell spell, WorldObject target)
 		{
 			var passiveCast = InheritSpellCast();
 
-			passiveCast.ValidateAndTrigger(spell, target);
-		}
-
-		public void ValidateAndTrigger(Spell spell, WorldObject target)
-		{
 			WorldObject[] targets;
-
+			// TODO: Consider triggering effect
 			if (spell.IsAreaSpell || (Caster.MayAttack(target) != spell.HasHarmfulEffects))
 			{
 				targets = null;
@@ -1429,8 +1423,8 @@ namespace WCell.RealmServer.Spells
 				targets = new[] { target };
 			}
 
-			Start(spell, true, targets);
-			Dispose();
+			passiveCast.Start(spell, true, targets);
+			passiveCast.Dispose();
 		}
 
 		#endregion

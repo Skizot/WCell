@@ -213,15 +213,6 @@ namespace WCell.AuthServer
 		//    }
 		//}
 
-		public void Disconnect(bool remove)
-		{
-			if (Channel != null)
-			{
-				Channel.Abort();
-			}
-			SetOffline(remove);
-		}
-
         /// <summary>
         /// Removes this realm from the RealmList
         /// </summary>

@@ -18,7 +18,7 @@ using System.Text;
 using System.Collections;
 using System.Threading;
 
-namespace WCell.Util.Collections
+namespace Cell.Core.Collections
 {
 	/// <summary>
 	/// Represents a per-thread immutable collection of keys and values.

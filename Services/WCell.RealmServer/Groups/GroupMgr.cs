@@ -15,7 +15,7 @@
  *************************************************************************/
 
 using System.Collections.Generic;
-using WCell.Util.Collections;
+using Cell.Core.Collections;
 using WCell.Constants;
 using WCell.Core;
 using WCell.Core.Initialization;

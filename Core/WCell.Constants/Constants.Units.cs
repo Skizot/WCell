@@ -234,7 +234,7 @@ namespace WCell.Constants
     /// Used in UNIT_FIELD_BYTES_2, 4th byte
     /// <remarks>Values from the first column of SpellShapeshiftForm.dbc</remarks>
     /// </summary>
-    public enum ShapeshiftForm
+    public enum ShapeShiftForm
     {
         Normal = 0,
         Cat = 1,
@@ -255,7 +255,6 @@ namespace WCell.Constants
         Shadow = 28,
         Stealth = 30,
         Moonkin = 31,
-        SpiritOfRedemption = 32,
-		End
+        SpiritOfRedemption = 32
     }
 }

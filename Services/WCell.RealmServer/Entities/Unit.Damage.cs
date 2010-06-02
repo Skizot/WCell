@@ -1,4 +1,3 @@
-using System.Collections.Generic;
 using WCell.Constants;
 using WCell.Constants.Items;
 using WCell.Constants.Updates;
@@ -14,11 +13,6 @@ namespace WCell.RealmServer.Entities
 	public partial class Unit
 	{
 		protected IWeapon m_mainWeapon, m_offhandWeapon, m_RangedWeapon;
-
-		/// <summary>
-		/// Applies modifications to your attacks
-		/// </summary>
-		public readonly List<IAttackModifier> AttackModifiers = new List<IAttackModifier>(1);
 
 		/// <summary>
 		/// The maximum distance in yards to a valid attackable target
@@ -361,9 +355,6 @@ namespace WCell.RealmServer.Entities
 		/// </summary>
 		public void DoRawDamage(IDamageAction action)
 		{
-			// Default on damage stuff
-			action.Victim.OnDamageAction(action);
-
 			// events
 			if (action.Attacker is Character)
 			{
@@ -392,6 +383,8 @@ namespace WCell.RealmServer.Entities
 			{
 				m_brain.OnDamageReceived(action);
 			}
+
+			action.Victim.OnDamageAction(action);
 
 			// deal damage
 			var dmg = action.ActualDamage;

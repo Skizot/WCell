@@ -31,12 +31,15 @@ namespace WCell.RealmServer.Spells.Effects
 
 		protected override void Apply(WorldObject target)
 		{
-			((Unit)target).ExtraAttacks += CalcEffectValue();
+			((Unit)target).ExtraAttacks += CalcEffectValue(); 
 		}
 
 		public override ObjectTypes TargetType
 		{
-			get { return ObjectTypes.Unit; }
+			get
+			{
+				return ObjectTypes.Unit;
+			}
 		}
 	}
 }

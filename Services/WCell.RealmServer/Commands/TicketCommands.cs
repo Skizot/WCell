@@ -20,7 +20,7 @@ namespace WCell.RealmServer.Commands
 			protected override void Initialize()
 			{
 				Init("Select", "Sel");
-				EnglishParamInfo = "[<playername>]";
+				ParamInfo = "[<playername>]";
 				EnglishDescription = "Selects the Ticket of the targeted Player or the Player with the given name.";
 			}
 

@@ -207,8 +207,7 @@ namespace WCell.Constants.Spells
 		ActivateRune = 146, //EmpowerRune
 		QuestFail = 147, // Quest Fail
 		Unused_Effect_148 = 148,
-
-		SideLeap = 149, //Sliding, Side leap
+		Effect_149 = 149, //Sliding, Side leap
 		Unused_Effect_150 = 150,
 		TriggerRitualOfSummoning = 151,
 		/// <summary>

@@ -18,7 +18,6 @@ using System;
 using System.ServiceModel;
 using System.Threading;
 using NLog;
-using WCell.Core.Timers;
 using WCell.Intercommunication.Client;
 using WCell.RealmServer.Localization;
 using WCell.Util;
@@ -41,18 +40,19 @@ namespace WCell.RealmServer.Server
 		[Variable("IPCUpdateInterval")]
 		public static int UpdateInterval = 5;
 
+		private Timer m_maintainConnTimer;
 		private AuthenticationClientAdapter m_ClientProxy;
 		private string m_netAddr;
 		private bool m_IsRunning;
 		readonly object lck = new object();
 		private readonly NetTcpBinding binding;
-		private DateTime lastUpdate;
 
 		/// <summary>
 		/// Initializes this Authentication Client
 		/// </summary>
 		public AuthenticationClient()
 		{
+			m_maintainConnTimer = new Timer(MaintainConnectionCallback);
 			m_IsRunning = true;
 			binding = new NetTcpBinding();
 			binding.Security.Mode = SecurityMode.None;
@@ -66,8 +66,17 @@ namespace WCell.RealmServer.Server
 			get { return m_IsRunning; }
 			set
 			{
-				m_IsRunning = value;
-				ForceUpdate();
+				if (m_IsRunning != value)
+				{
+					if (!(m_IsRunning = value))
+					{
+						Disconnect(true);
+					}
+					else
+					{
+						Connect();
+					}
+				}
 			}
 		}
 
@@ -96,34 +105,23 @@ namespace WCell.RealmServer.Server
             internal set;
         }
 
-		public void ForceUpdate()
+		void Initialize()
 		{
-			// little trick to force an update
-			lastUpdate = DateTime.Now - TimeSpan.FromSeconds(UpdateInterval);
-		}
-
-		public void StartConnect(string netAddr)
-		{
-			m_netAddr = netAddr;
-			m_IsRunning = true;
-			if (lastUpdate == default(DateTime))
-			{
-				RealmServer.Instance.RegisterUpdatable(new SimpleUpdatable(MaintainConnectionCallback));
-				lastUpdate = DateTime.Now;
-			}
-		}
-
-		/// <summary>
-		/// Must be executed in RealmServer context
-		/// </summary>
-		protected bool Connect()
-		{
-			RealmServer.Instance.EnsureContext();
-
-			Disconnect(true);
-			
 			m_ClientProxy = new AuthenticationClientAdapter(binding, new EndpointAddress(m_netAddr));
 			m_ClientProxy.Error += OnError;
+		}
+
+		public void Connect(string netAddr)
+		{
+			m_netAddr = netAddr;
+
+			Connect();
+		}
+
+		public bool Connect()
+		{
+			Disconnect(true);
+			Initialize();
 
 			bool conn;
 
@@ -133,8 +131,10 @@ namespace WCell.RealmServer.Server
 
 				//if (!RealmServer.Instance.IsRegisteredAtAuthServer)
 				RealmServer.Instance.RegisterRealm();
-				conn = IsConnected;
-				lastUpdate = DateTime.Now;
+				if (conn = IsConnected)
+				{
+					m_maintainConnTimer.Change(UpdateInterval * 1000, UpdateInterval * 1000);
+				}
 			}
 			catch (Exception e)
 			{
@@ -183,23 +183,17 @@ namespace WCell.RealmServer.Server
 		protected void Reconnect()
 		{
 			Disconnect(false);
+			m_maintainConnTimer.Change(ReconnectInterval * 1000, Timeout.Infinite);
 		}
 
-		private void MaintainConnectionCallback()
+		private void MaintainConnectionCallback(object sender)
 		{
-			if ((DateTime.Now - lastUpdate).TotalSeconds < UpdateInterval)
+			if (!m_IsRunning)
 			{
 				return;
 			}
 
-			if (!m_IsRunning)
-			{
-				if (IsConnected)
-				{
-					Disconnect(true);
-				}
-			}
-			else if (!IsConnected)
+			if (!IsConnected)
 			{
 				lock (lck)
 				{
@@ -220,19 +214,17 @@ namespace WCell.RealmServer.Server
 			{
 				lock (lck)
 				{
-					if (IsConnected) // check again if we are connected after obtaining the lock
+					if (IsConnected)
 					{
 						RealmServer.Instance.UpdateRealm();
-						lastUpdate = DateTime.Now;
 					}
 				}
 			}
 		}
 
-		protected void Disconnect(bool notify)
-		{
-			RealmServer.Instance.EnsureContext();
 
+		public void Disconnect(bool notify)
+		{
 			if (m_ClientProxy != null &&
 				m_ClientProxy.State != CommunicationState.Closed &&
 			    m_ClientProxy.State != CommunicationState.Closing)
@@ -261,6 +253,11 @@ namespace WCell.RealmServer.Server
 				{
 					evt(this, null);
 				}
+			}
+
+			if (!m_IsRunning)
+			{
+				m_maintainConnTimer.Change(Timeout.Infinite, Timeout.Infinite);
 			}
 		}
 	}

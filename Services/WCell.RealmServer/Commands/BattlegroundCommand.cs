@@ -58,7 +58,7 @@ namespace WCell.RealmServer.Commands
 			protected override void Initialize()
 			{
 				Init("List", "L");
-				EnglishParamInfo = "[-f <bgid>]";
+				ParamInfo = "[-f <bgid>]";
 				EnglishDescription = "Shows an overview over all existing BGs. " +
 					"-f (filter) switch only shows BGs of the given type.";
 			}
@@ -118,7 +118,7 @@ namespace WCell.RealmServer.Commands
 			protected override void Initialize()
 			{
 				Init("Info", "I");
-				EnglishParamInfo = "[-i <BGId> <InstanceId>]";
+				ParamInfo = "[-i <BGId> <InstanceId>]";
 				EnglishDescription = "Shows some information about the current or (if -s switch is used) given Battleground.";
 			}
 
@@ -134,7 +134,7 @@ namespace WCell.RealmServer.Commands
 
 			public static void DisplayInfo(CmdTrigger<RealmServerCmdArgs> trigger, Battleground bg)
 			{
-				trigger.Reply(bg.ToString());
+				trigger.Reply(bg);
 				trigger.Reply(" " + bg.GetTeam(BattlegroundSide.Alliance));
 				trigger.Reply(" " + bg.GetTeam(BattlegroundSide.Horde));
 			}
@@ -149,7 +149,7 @@ namespace WCell.RealmServer.Commands
 			protected override void Initialize()
 			{
 				Init("Prepare");
-				EnglishParamInfo = "[-i <BGId> <InstanceId>]";
+				ParamInfo = "[-i <BGId> <InstanceId>]";
 				EnglishDescription = "Starts preparation time.";
 			}
 
@@ -173,7 +173,7 @@ namespace WCell.RealmServer.Commands
 			protected override void Initialize()
 			{
 				Init("Create", "C");
-				EnglishParamInfo = "[-[i]|[e][l <level>]] <BGId>";
+				ParamInfo = "[-[i]|[e][l <level>]] <BGId>";
 				EnglishDescription = "Creates a new Instance of the given BG type. " +
 					"-e enters it right away. " +
 					"-i invites the target to the target's Faction's Team. " +
@@ -256,7 +256,7 @@ namespace WCell.RealmServer.Commands
 			protected override void Initialize()
 			{
 				Init("Enter", "E");
-				EnglishParamInfo = "[-i <BGId> <InstanceId>] [g]";
+				ParamInfo = "[-i <BGId> <InstanceId>] [g]";
 				EnglishDescription = "Teleports the Character target into the given instance. " +
 					"g teleports the entire group.";
 			}
@@ -306,7 +306,7 @@ namespace WCell.RealmServer.Commands
 			protected override void Initialize()
 			{
 				Init("Invite", "Inv", "Join");
-				EnglishParamInfo = "[-i <BGId> <InstanceId>] [[g][s <side>]]";
+				ParamInfo = "[-i <BGId> <InstanceId>] [[g][s <side>]]";
 				EnglishDescription = "Invites oneself or the target to an existing Battleground. " +
 					"Use s to select a side. " +
 					"Use g to select the entire Group of the Character.";
@@ -373,7 +373,7 @@ namespace WCell.RealmServer.Commands
 			protected override void Initialize()
 			{
 				Init("Delete", "Del");
-				EnglishParamInfo = "[-i <BGId> <InstanceId>]";
+				ParamInfo = "[-i <BGId> <InstanceId>]";
 				EnglishDescription = "Deletes the Battleground of the given Map with the given Id, or the current one if no arguments are supplied.";
 			}
 

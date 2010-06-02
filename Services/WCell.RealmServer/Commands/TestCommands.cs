@@ -13,7 +13,7 @@ namespace WCell.RealmServer.Commands
 		protected override void Initialize()
 		{
 			base.Init("ShowCastFail");
-			EnglishParamInfo = "<spell> <reason>";
+			ParamInfo = "<spell> <reason>";
 			EnglishDescription = "Sends a spell failed packet";
 
 			// doesn't do anything
@@ -38,7 +38,7 @@ namespace WCell.RealmServer.Commands
 		protected override void Initialize()
 		{
 			base.Init("ShowBankSlotResult");
-			EnglishParamInfo = "<value>";
+			ParamInfo = "<value>";
 			EnglishDescription = "Sends the BankSlotResult packet";
 
 			// we don't really need this

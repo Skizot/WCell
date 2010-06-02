@@ -289,26 +289,26 @@ namespace WCell.RealmServer.Modifiers
 		internal static void UpdatePowerRegen(this Unit unit)
 		{
 			var regen = 0;
-
-			if (unit.IsAlive)
+			if (unit is Character)
 			{
-				if (unit is Character)
-				{
-					regen = ((Character) unit).Archetype.Class.CalculatePowerRegen((Character) unit);
-				}
-				else if (unit.IsMinion && unit.PowerType == PowerType.Focus)
+				regen = (int)((Character)unit).Archetype.Class.CalculatePowerRegen(unit.Level, unit.Spirit, unit.Intellect);
+			}
+
+			else if (unit.IsMinion)
+			{
+				if (unit.PowerType == PowerType.Focus)
 				{
 					regen = 5;
 				}
-				else
-				{
-					// TODO: NPC regen
-					regen = unit.BasePower/20;
-				}
-
-				regen += unit.StatModsInt[(int) StatModifierInt.PowerRegen];
-				regen = GetMultiMod((int) unit.MultiplierMods[(int) StatModifierFloat.PowerRegen], regen);
 			}
+
+			else
+			{
+				regen = 0;
+			}
+
+			regen += unit.StatModsInt[(int)StatModifierInt.PowerRegen];
+			regen = GetMultiMod((int)unit.MultiplierMods[(int)StatModifierFloat.PowerRegen], regen);
 
 			unit.PowerRegenPerTick = regen;
 		}
@@ -371,9 +371,9 @@ namespace WCell.RealmServer.Modifiers
 
 			if (shield != null && shield.Template.InventorySlotType == InventorySlotType.Shield)
 			{
-				blockChance = chr.StatModsInt[(int)StatModifierInt.BlockChance];
+				blockValue = 5 + (int)shield.Template.BlockValue + chr.StatModsInt[(int)StatModifierInt.BlockValue];
 
-				blockValue = 5 + (int)shield.Template.BlockValue + (int)blockChance;
+				blockChance = chr.StatModsInt[(int)StatModifierInt.BlockChance];
 
 				// + block from block rating
 				blockChance += chr.GetCombatRatingMod(CombatRating.Block) / GameTables.GetCRTable(CombatRating.Block)[chr.Level - 1];
