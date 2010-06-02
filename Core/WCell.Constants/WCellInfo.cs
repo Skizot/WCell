@@ -23,7 +23,6 @@ namespace WCell.Constants
 		/// The version of the WoW Client that is currently supported.
 		/// </summary>
 		public static readonly ClientVersion RequiredVersion = new ClientVersion(3, 3, 5, 11993);
-
 	}
 
 }
