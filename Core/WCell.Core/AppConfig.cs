@@ -48,14 +48,7 @@ namespace WCell.Core
 		/// <param name="executablePath">The path of the executable whose App-config to load</param>
 		public AppConfig(string executablePath)
 		{
-			try
-			{
-				m_cfg = ConfigurationManager.OpenExeConfiguration((ExecutableFile = new FileInfo(executablePath)).FullName);
-			}
-			catch (Exception e)
-			{
-				throw new Exception(string.Format("Cannot load AppConfig for {0}", executablePath), e);
-			}
+			m_cfg = ConfigurationManager.OpenExeConfiguration((ExecutableFile = new FileInfo(executablePath)).FullName);
 
 			LoadConfigDefaults();
 		}

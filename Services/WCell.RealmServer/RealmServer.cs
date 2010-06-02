@@ -262,9 +262,9 @@ namespace WCell.RealmServer
 		}
 
 		/// <summary>
-		/// 
+		/// Does nothing atm
 		/// </summary>
-		internal void UnregisterRealm()
+		public void UnregisterRealm()
 		{
             if (AuthServiceClient.IsOpen && AuthServiceClient.Instance != null)
     		    AuthServiceClient.Instance.UnregisterRealmService(RealmServerConfiguration.RealmName);

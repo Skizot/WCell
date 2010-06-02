@@ -21,7 +21,6 @@ using WCell.Constants.Talents;
 using WCell.Core;
 using WCell.Core.DBC;
 using WCell.RealmServer.Spells;
-using WCell.Util;
 
 namespace WCell.RealmServer.Talents
 {
@@ -62,12 +61,7 @@ namespace WCell.RealmServer.Talents
 				id = (int)(talent.Id = (TalentId)GetUInt32(rawData, 0));
 
 				var treeId = (TalentTreeId)GetUInt32(rawData, 1);
-				talent.Tree = TalentTrees.Get((uint)treeId);
-
-				if (talent.Tree == null)
-				{
-					return null;
-				}
+				talent.Tree = TalentTrees[(uint)treeId];
 
 				talent.Row = GetUInt32(rawData, 2);
 				talent.Col = GetUInt32(rawData, 3);

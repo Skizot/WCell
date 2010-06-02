@@ -13,7 +13,7 @@ namespace WCell.Core.Timers
 	/// <remarks>This timer is not standalone, and must be driven via the <see cref="IUpdatable" /> interface.</remarks>
 	public class TimerEntry : IDisposable, IUpdatable
 	{
-		private float m_SecondsSinceLastTick;
+		private float _totalTime;
 
 		public float RemainingInitialDelay, Interval;
 		public Action<float> Action;
@@ -30,7 +30,7 @@ namespace WCell.Core.Timers
 		/// <param name="callback">the callback to fire</param>
 		public TimerEntry(float delay, float interval, Action<float> callback)
 		{
-			m_SecondsSinceLastTick = -1.0f;
+			_totalTime = -1.0f;
 			Action = callback;
 			RemainingInitialDelay = delay;
 			Interval = interval;
@@ -65,9 +65,9 @@ namespace WCell.Core.Timers
 		/// <summary>
 		/// The amount of time elapsed since the last firing.
 		/// </summary>
-		public float SecondsSinceLastTick
+		public float TotalTime
 		{
-			get { return m_SecondsSinceLastTick; }
+			get { return _totalTime; }
 		}
 
 		/// <summary>
@@ -75,7 +75,7 @@ namespace WCell.Core.Timers
 		/// </summary>
 		public void Start()
 		{
-			m_SecondsSinceLastTick = 0.0f;
+			_totalTime = 0.0f;
 		}
 
 		/// <summary>
@@ -85,7 +85,7 @@ namespace WCell.Core.Timers
 		public void Start(float initialDelay)
 		{
 			RemainingInitialDelay = initialDelay;
-			m_SecondsSinceLastTick = 0.0f;
+			_totalTime = 0.0f;
 		}
 
 		/// <summary>
@@ -97,7 +97,7 @@ namespace WCell.Core.Timers
 		{
 			RemainingInitialDelay = initialDelay;
 			Interval = interval;
-			m_SecondsSinceLastTick = 0.0f;
+			_totalTime = 0.0f;
 		}
 
 		/// <summary>
@@ -137,7 +137,7 @@ namespace WCell.Core.Timers
 		/// </summary>
 		public bool IsRunning
 		{
-			get { return m_SecondsSinceLastTick >= 0; }
+			get { return _totalTime >= 0; }
 		}
 
 		/// <summary>
@@ -145,7 +145,7 @@ namespace WCell.Core.Timers
 		/// </summary>
 		public void Stop()
 		{
-			m_SecondsSinceLastTick = -1f;
+			_totalTime = -1f;
 		}
 
 		/// <summary>
@@ -155,7 +155,7 @@ namespace WCell.Core.Timers
 		public void Update(float updateDelta)
 		{
 			// means this timer is not running.
-			if (m_SecondsSinceLastTick == -1f)
+			if (_totalTime == -1f)
 				return;
 
 			if (RemainingInitialDelay > 0.0f)
@@ -171,24 +171,24 @@ namespace WCell.Core.Timers
                         Stop();
 					}
 
-                    Action(m_SecondsSinceLastTick);
-					if (m_SecondsSinceLastTick != -1)
+                    Action(_totalTime);
+					if (_totalTime != -1)
 					{
-						m_SecondsSinceLastTick = 0;
+						_totalTime = 0;
 					}
                 }
 			}
 			else
 			{
 				// update our idle time
-				m_SecondsSinceLastTick += updateDelta;
+				_totalTime += updateDelta;
 
-				if (m_SecondsSinceLastTick >= Interval)
+				if (_totalTime >= Interval)
 				{
-					Action(m_SecondsSinceLastTick);
-					if (m_SecondsSinceLastTick != -1)
+					Action(_totalTime);
+					if (_totalTime != -1)
 					{
-						m_SecondsSinceLastTick -= Interval;
+						_totalTime -= Interval;
 					}
 				}
 			}

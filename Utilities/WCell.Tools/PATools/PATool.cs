@@ -12,7 +12,7 @@ using WCell.Core.Network;
 
 namespace WCell.Tools.PATools
 {
-	public class PATool : XmlFile<PATool>
+	public class PATool : XmlConfig<PATool>
 	{
 		private DirectoryInfo m_selectedDir;
 		private IStreamTarget m_output;
@@ -33,7 +33,7 @@ namespace WCell.Tools.PATools
 			m_opcodeValidator = DefaultOpCodeValidator;
 		}
 
-		public PATool(XmlFileBase parentCfg) : base(parentCfg)
+		public PATool(XmlConfigBase parentCfg) : base(parentCfg)
 		{
 			m_opcodeValidator = DefaultOpCodeValidator;
 		}
@@ -44,13 +44,13 @@ namespace WCell.Tools.PATools
 			Init(null, filename, selectedDir, outputTarget, defaultParser);
 		}
 
-		public PATool(XmlFileBase parentCfg, DirectoryInfo selectedDir, IStreamTarget outputTarget, LogParser defaultParser)
+		public PATool(XmlConfigBase parentCfg, DirectoryInfo selectedDir, IStreamTarget outputTarget, LogParser defaultParser)
 			: this(parentCfg)
 		{
 			Init(parentCfg, null, selectedDir, outputTarget, defaultParser);
 		}
 
-		internal void Init(XmlFileBase parentCfg, string filename, DirectoryInfo selectedDir, IStreamTarget outputTarget,
+		internal void Init(XmlConfigBase parentCfg, string filename, DirectoryInfo selectedDir, IStreamTarget outputTarget,
 		                   LogParser defaultParser)
 		{
 			m_parentConfig = parentCfg;
@@ -388,7 +388,7 @@ namespace WCell.Tools.PATools
 			SelectedFiles.Clear();
 		}
 
-		internal void _OnLoad(XmlFileBase parentCfg)
+		internal void _OnLoad(XmlConfigBase parentCfg)
 		{
 			m_parentConfig = parentCfg;
 			OnLoad();

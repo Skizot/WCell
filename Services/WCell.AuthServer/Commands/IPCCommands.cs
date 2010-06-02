@@ -13,7 +13,7 @@ namespace WCell.AuthServer.Commands
 		protected override void Initialize()
 		{
 			Init("IPC");
-			EnglishParamInfo = "";
+			ParamInfo = "";
 			EnglishDescription = "Defines a set of Commands to administrate the IPC Service.";
 		}
 
@@ -22,7 +22,7 @@ namespace WCell.AuthServer.Commands
 			protected override void Initialize()
 			{
 				Init("Start", "Run");
-				EnglishParamInfo = "";
+				ParamInfo = "";
 				EnglishDescription = "Starts the IPC Service (if not already running).";
 			}
 
@@ -45,7 +45,7 @@ namespace WCell.AuthServer.Commands
 			protected override void Initialize()
 			{
 				Init("Stop", "Halt");
-				EnglishParamInfo = "";
+				ParamInfo = "";
 				EnglishDescription = "Stops the IPC Service (if running).";
 			}
 
@@ -68,7 +68,7 @@ namespace WCell.AuthServer.Commands
 			protected override void Initialize()
 			{
 				Init("Toggle");
-				EnglishParamInfo = "[0/1]";
+				ParamInfo = "[0/1]";
 				EnglishDescription = "Toggles the IPC Service.";
 			}
 

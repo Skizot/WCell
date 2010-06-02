@@ -7,7 +7,7 @@ using WCell.Core.Network;
 using WCell.PacketAnalysis;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using WCell.PacketAnalysis.Updates;
-using WCell.Util.Collections;
+using Cell.Core.Collections;
 using WCell.RealmServer.Tests.Network;
 using WCell.Constants;
 

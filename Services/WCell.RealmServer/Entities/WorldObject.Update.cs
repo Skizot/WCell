@@ -1,6 +1,6 @@
 using System;
 using System.Collections.Generic;
-using WCell.Util.Collections;
+using Cell.Core.Collections;
 using WCell.Constants.Updates;
 using WCell.Constants.World;
 using WCell.Util.Threading;

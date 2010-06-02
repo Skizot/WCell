@@ -194,7 +194,7 @@ namespace WCell.RealmServer.Commands
 				var reqTargets = realmCmd.TargetTypes;
 				return (!realmCmd.NeedsCharacter || m_user != null) &&
 					   (reqTargets == ObjectTypeCustom.None ||
-						(target != null && reqTargets.HasAnyFlag(target.CustomType)));
+						(target != null && reqTargets.HasFlag(target.CustomType)));
 			}
 			return true;
 		}

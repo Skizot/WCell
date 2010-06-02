@@ -17,7 +17,7 @@
 using System;
 using System.Collections.Generic;
 using Castle.ActiveRecord;
-using WCell.Util.Collections;
+using Cell.Core.Collections;
 using WCell.Constants;
 using WCell.Constants.Guilds;
 using WCell.Core;

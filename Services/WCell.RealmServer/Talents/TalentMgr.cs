@@ -37,7 +37,7 @@ namespace WCell.RealmServer.Talents
 		internal const int MaxTalentColCount = 8;
 
 		[NotVariable]
-		public static TalentTree[] TalentTrees = new TalentTree[(int)TalentTreeId.End + 200];
+		public static TalentTree[] TalentTrees = new TalentTree[(int)TalentTreeId.End];
 
 		[NotVariable]
 		public static TalentTree[][] TreesByClass = new TalentTree[12][];
@@ -96,8 +96,6 @@ namespace WCell.RealmServer.Talents
 
 			foreach (var talent in talentReader.EntryList)
 			{
-				if (talent == null) continue;
-
 				ArrayUtil.Set(ref Entries, (uint)talent.Id, talent);
 				talent.Tree.Talents.Add(talent);
 

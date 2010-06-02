@@ -55,7 +55,7 @@ namespace WCell.Util.Variables
 			AutoSave = true;
 		}
 
-		public virtual string FilePath
+		public virtual string Filename
 		{
 			get;
 			set;
@@ -119,7 +119,7 @@ namespace WCell.Util.Variables
 
 		public virtual bool Load()
 		{
-			if (File.Exists(FilePath))
+			if (File.Exists(Filename))
 			{
 				Deserialize();
 				return true;
@@ -134,7 +134,7 @@ namespace WCell.Util.Variables
 		public void Deserialize()
 		{
 			XmlUtil.EnsureCulture();
-			using (var reader = XmlReader.Create(FilePath))
+			using (var reader = XmlReader.Create(Filename))
 			{
 				reader.ReadStartElement();
 				reader.SkipEmptyNodes();
@@ -145,7 +145,7 @@ namespace WCell.Util.Variables
 				}
 				catch (Exception e)
 				{
-					throw new Exception("Unable to load Configuration from: " + FilePath, e);
+					throw new Exception("Unable to load Configuration from: " + Filename, e);
 				}
 				finally
 				{
@@ -155,6 +155,11 @@ namespace WCell.Util.Variables
 				//m_definitions.ReadXml(reader);
 				//InitDefs();
 			}
+		}
+
+		public void Save()
+		{
+			Save(true, false);
 		}
 
 		public bool Contains(string name)
@@ -168,17 +173,12 @@ namespace WCell.Util.Variables
 			return def.IsReadOnly;
 		}
 
-		public void Save()
-		{
-			Save(true, false);
-		}
-
 		public virtual void Save(bool backupFirst, bool auto)
 		{
 			try
 			{
 				// don't backup empty files
-				if (backupFirst && File.Exists(FilePath) && new FileInfo(FilePath).Length > 0)
+				if (backupFirst && File.Exists(Filename) && new FileInfo(Filename).Length > 0)
 				{
 					Backup(".bak");
 				}
@@ -186,7 +186,7 @@ namespace WCell.Util.Variables
 			}
 			catch (Exception e)
 			{
-				throw new Exception("Unable to save Configuration to: " + FilePath, e);
+				throw new Exception("Unable to save Configuration to: " + Filename, e);
 			}
 
 			XmlUtil.EnsureCulture();
@@ -205,13 +205,13 @@ namespace WCell.Util.Variables
 
 		private void Backup(string suffix)
 		{
-			var name = FilePath + suffix;
+			var name = Filename + suffix;
 			try
 			{
-				var file = new FileInfo(FilePath);
+				var file = new FileInfo(Filename);
 				if (file.Length > 0)
 				{
-					File.Copy(FilePath, name, true);
+					File.Copy(Filename, name, true);
 				}
 			}
 			catch (Exception e)
@@ -247,7 +247,7 @@ namespace WCell.Util.Variables
 					}
 				}
 
-				File.WriteAllBytes(FilePath, stream.ToArray());
+				File.WriteAllBytes(Filename, stream.ToArray());
 			}
 		}
 

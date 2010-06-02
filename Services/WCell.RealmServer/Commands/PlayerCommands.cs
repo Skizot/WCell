@@ -23,7 +23,7 @@ namespace WCell.RealmServer.Commands
 		protected override void Initialize()
 		{
 			Init("Save");
-			EnglishParamInfo = "";
+			ParamInfo = "";
 			EnglishDescription = "Updates all changes on the given Character";
 		}
 
@@ -65,7 +65,7 @@ namespace WCell.RealmServer.Commands
 		protected override void Initialize()
 		{
 			Init("Email", "SetEmail");
-			EnglishParamInfo = "<email>";
+			ParamInfo = "<email>";
 			EnglishDescription = "Sets the Account's current email address.";
 		}
 
@@ -113,7 +113,7 @@ namespace WCell.RealmServer.Commands
 		protected override void Initialize()
 		{
 			Init("Password", "Pass");
-			EnglishParamInfo = "<oldpw> <newpw> <newpw>";
+			ParamInfo = "<oldpw> <newpw> <newpw>";
 			EnglishDescription = "Changes your password.";
 		}
 
@@ -273,7 +273,7 @@ namespace WCell.RealmServer.Commands
 		protected override void Initialize()
 		{
 			Init("Info", "I", "Address", "Addr");
-			EnglishParamInfo = "[-l]";
+			ParamInfo = "[-l]";
 			EnglishDescription = "Gives some server info. -l lists all players (if not too many).";
 		}
 
@@ -313,7 +313,7 @@ namespace WCell.RealmServer.Commands
 		protected override void Initialize()
 		{
 			Init("GodMode", "GM");
-			EnglishParamInfo = "[0|1]";
+			ParamInfo = "[0|1]";
 			EnglishDescription = "Toggles the GodMode";
 		}
 
@@ -343,7 +343,7 @@ namespace WCell.RealmServer.Commands
 		protected override void Initialize()
 		{
 			Init("Notify", "SendNotification");
-			EnglishParamInfo = "<text>";
+			ParamInfo = "<text>";
 			EnglishDescription = "Notifies the target with a flashing message.";
 		}
 

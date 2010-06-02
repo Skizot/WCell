@@ -212,7 +212,7 @@ namespace WCell.RealmServer.Entities
 		        for (var i = m_privateUpdateMask.m_lowestIndex; i <= m_privateUpdateMask.m_highestIndex; i++)
 		        {
 		            var flags = _UpdateFieldInfos.FieldFlags[i];
-					if (flags.HasAnyFlag(relation) &&
+					if (flags.HasFlag(relation) &&
 						(!flags.HasAnyFlag(UpdateFieldFlags.Public) || m_publicUpdateMask.GetBit(i)))
                     {
                         mask.SetBit(i);

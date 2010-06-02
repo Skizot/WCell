@@ -10,6 +10,13 @@ namespace WCell.Util
 	public static class AppUtil
 	{
 		#region System Helpers
+		/// <summary>
+		/// Gets a value indicating if the process is running in 64 bit.
+		/// </summary>
+		public static bool IsRunningOn64Bit
+		{
+			get { return (IntPtr.Size == sizeof(long)); }
+		}
 
 		/// <summary>
 		/// Gets a value indicating if the operating system is a Windows 2000 or a newer one.
@@ -45,7 +52,6 @@ namespace WCell.Util
 		{
 			get { return (Environment.OSVersion.Platform == PlatformID.Win32NT) && (Environment.OSVersion.Version.Major >= 6); }
 		}
-
 		#endregion
 
 		#region Application Exit Handling

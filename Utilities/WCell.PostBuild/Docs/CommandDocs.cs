@@ -1,6 +1,5 @@
 using System.Collections.Generic;
 using WCell.AuthServer.Commands;
-using WCell.RealmServer;
 using WCell.RealmServer.Commands;
 using System.IO;
 using Cell.Core;
@@ -8,8 +7,6 @@ using WCell.Util.Commands;
 using WCell.Tools.Commands;
 using WCell.Util;
 using WCell.AuthServer;
-
-using RealmServ = WCell.RealmServer.RealmServer;
 
 namespace WCell.PostBuild.Docs
 {
@@ -51,9 +48,8 @@ namespace WCell.PostBuild.Docs
 			indent += "\t";
 			writer.WriteLine(indent + "Aliases: {0}", cmd.Aliases.ToString(", "));
 
-			writer.WriteLine(indent + "Usage: {0}", cmd.CreateUsage());
-			writer.WriteLine(indent + "Description: {0}", cmd.GetDescription(null));
-
+			writer.WriteLine(indent + "Usage: {0}", cmd.Usage);
+			writer.WriteLine(indent + "Description: {0}", cmd.EnglishDescription);
 			var command = cmd as RealmServerCommand;
 			if (command != null)
 			{

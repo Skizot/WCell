@@ -1,4 +1,5 @@
 
+
 namespace WCell.Constants.Spells
 {
 	public static class Extensions
@@ -17,16 +18,6 @@ namespace WCell.Constants.Spells
 		public static bool HasAnyFlag(this SpellAttributesEx flags, SpellAttributesEx otherFlags)
 		{
 			return (flags & otherFlags) != 0;
-		}
-
-		public static bool HasAnyFlag(this ProcTriggerFlags flags, ProcTriggerFlags otherFlags)
-		{
-			return (flags & otherFlags) != 0;
-		}
-
-		public static bool HasAnyFlag(this AuraStateMask flags, AuraState state)
-		{
-			return (flags & (AuraStateMask)(1 << ((int)state - 1))) != 0;
 		}
 		#endregion
 	}

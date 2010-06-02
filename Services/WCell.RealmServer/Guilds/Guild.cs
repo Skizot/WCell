@@ -32,7 +32,7 @@ using WCell.RealmServer.Chat;
 using WCell.RealmServer.Entities;
 using WCell.Util;
 using WCell.Util.NLog;
-using WCell.Util.Collections;
+using Cell.Core.Collections;
 
 namespace WCell.RealmServer.Guilds
 {

@@ -208,7 +208,7 @@ namespace WCell.RealmServer.Spells
 					packet.Write(0);
 				}
 
-                if (cast.TargetFlags.HasAnyFlag(SpellTargetFlags.DestinationLocation))
+                if (cast.TargetFlags.HasFlag(SpellTargetFlags.DestinationLocation))
                 {
                     packet.Write((byte)0); // unk 3.3.x?
                 }
@@ -259,7 +259,7 @@ namespace WCell.RealmServer.Spells
 				}
 			}
 			packet.Write((uint)flags);
-			if (flags.HasAnyFlag(
+            if (flags.HasFlag(
 				SpellTargetFlags.SpellTargetFlag_Dynamic_0x10000 |
 				SpellTargetFlags.Corpse |
 				SpellTargetFlags.Object |
@@ -443,7 +443,7 @@ namespace WCell.RealmServer.Spells
 					packet.Write(0);
 				}
 
-                if (cast.TargetFlags.HasAnyFlag(SpellTargetFlags.DestinationLocation))
+                if (cast.TargetFlags.HasFlag(SpellTargetFlags.DestinationLocation))
                 {
                     packet.Write((byte)0); // unk 3.3.x?
                 }

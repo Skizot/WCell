@@ -52,7 +52,7 @@ using WCell.RealmServer.Taxi;
 using WCell.Util;
 using WCell.Util.Commands;
 using WCell.RealmServer.Battlegrounds;
-using WCell.Util.Collections;
+using Cell.Core.Collections;
 using WCell.Util.Graphics;
 using WCell.Util.Threading;
 using WCell.RealmServer.Spells.Auras;
@@ -589,20 +589,20 @@ namespace WCell.RealmServer.Entities
 			TryLevelUp();
 		}
 
-		internal bool TryLevelUp()
+		internal void TryLevelUp()
 		{
 			var nextLevelXp = NextLevelXP;
 			var level = Level;
-			var leveled = false;
-			var xp = XP;
-
-			while (xp >= nextLevelXp && level < RealmServerConfiguration.MaxCharacterLevel)
+			if ((XP >= nextLevelXp) && (level < RealmServerConfiguration.MaxCharacterLevel))
 			{
-				XP = xp -= nextLevelXp;
-				Level = ++level;
-				NextLevelXP = nextLevelXp = XpGenerator.GetXpForlevel(level + 1);
+				// base.LevelUp();
 
-				if (level >= 10)
+				XP -= nextLevelXp;
+				Level = ++level;
+				nextLevelXp = XpGenerator.GetXpForlevel(level + 1);
+				NextLevelXP = nextLevelXp;
+
+				if (Level >= 10)
 				{
 					FreeTalentPoints++;
 				}
@@ -612,17 +612,17 @@ namespace WCell.RealmServer.Entities
 				{
 					evt(this);
 				}
-				leveled = true;
-			}
 
-			if (leveled)
-			{
+				if (XP >= nextLevelXp)
+				{
+					TryLevelUp();
+					return;
+				}
+
 				ModStatsForLevel(level);
 				m_auras.ReapplyAllAuras();
 				SaveLater();
-				return true;
 			}
-			return false;
 		}
 
 		public void ModStatsForLevel(int level)
@@ -898,7 +898,7 @@ namespace WCell.RealmServer.Entities
 
 		public bool IsSwimming
 		{
-			get { return MovementFlags.HasFlag(MovementFlags.Swimming); }
+            get { return MovementFlags.HasFlag(MovementFlags.Swimming); }
 		}
 
 		public bool IsUnderwater
@@ -1307,17 +1307,16 @@ namespace WCell.RealmServer.Entities
 		/// <summary>
 		/// Adds all damage boni and mali
 		/// </summary>
-		public override void AddDamageMods(DamageAction action)
+		public override int AddDamageMods(int dmg, SpellEffect effect, DamageSchool school)
 		{
-			base.AddDamageMods(action);
-			var dmg = UnitUpdates.GetMultiMod(GetInt32(PlayerFields.MOD_DAMAGE_DONE_PCT + (int)action.UsedSchool) / 100f, action.Damage);
-			if (action.Spell != null)
+			dmg = UnitUpdates.GetMultiMod(GetFloat(PlayerFields.MOD_DAMAGE_DONE_PCT + (int)school) / 100f, dmg);
+			if (effect != null)
 			{
-				dmg = PlayerSpells.GetModifiedInt(SpellModifierType.SpellPower, action.Spell, dmg);
+				dmg = PlayerSpells.GetModifiedInt(SpellModifierType.SpellPower, effect.Spell, dmg);
 			}
 
-			dmg += GetDamageDoneMod(action.UsedSchool);
-			action.Damage = dmg;
+			dmg += GetDamageDoneMod(school);
+			return dmg;
 		}
 
 		public override int AddHealingMods(int dmg, SpellEffect effect, DamageSchool school)
@@ -1466,7 +1465,7 @@ namespace WCell.RealmServer.Entities
 		{
 			get
 			{
-				return (m_region.CanFly && (m_zone == null || m_zone.Flags.HasFlag(ZoneFlags.CanFly))) || Role.IsStaff;
+			    return (m_region.CanFly && (m_zone == null || m_zone.Flags.HasFlag(ZoneFlags.CanFly))) || Role.IsStaff;
 			}
 		}
 

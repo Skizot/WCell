@@ -31,11 +31,10 @@ namespace WCell.RealmServer.Spells.Effects
 		{
 			if (((Unit)target).PowerType == PowerType.Mana)
 			{
-				var manavalue = (int)((((Unit)target).MaxPower * CalcEffectValue()) / 100f);
+				var manavalue = ((((Unit)target).MaxPower * Effect.MiscValue) / 100);
 				((Unit)target).Energize(m_cast.Caster, manavalue, Effect);
 			}
 		}
-
 		public override ObjectTypes TargetType
 		{
 			get { return ObjectTypes.Unit; }

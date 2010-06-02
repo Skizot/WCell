@@ -16,7 +16,7 @@ namespace WCell.RealmServer.Commands
 		protected override void Initialize()
 		{
 			Init("Quest");
-			EnglishParamInfo = "";
+			ParamInfo = "";
 			EnglishDescription = "Provides a set of commands to dynamically change status of Quests and more.";
 		}
 
@@ -26,7 +26,7 @@ namespace WCell.RealmServer.Commands
 			protected override void Initialize()
 			{
 				Init("Reset", "Start");
-				EnglishParamInfo = "<questid>";
+				ParamInfo = "<questid>";
 				EnglishDescription = "Removes all progress of the given Quest (if present) and starts it (again).";
 			}
 
@@ -82,7 +82,7 @@ namespace WCell.RealmServer.Commands
 			protected override void Initialize()
 			{
 				Init("Cancel");
-				EnglishParamInfo = "<questid>";
+				ParamInfo = "<questid>";
 				EnglishDescription = "Cancels the given active Quest.";
 			}
 
@@ -124,7 +124,7 @@ namespace WCell.RealmServer.Commands
 			protected override void Initialize()
 			{
 				Init("GiveReward", "Reward");
-				EnglishParamInfo = "<questid> [<choiceSlot>]";
+				ParamInfo = "<questid> [<choiceSlot>]";
 				EnglishDescription = "Gives the reward of the given quest to the Character. " +
 					"The optional choiceSlot determines the choosable item (if any)";
 			}
@@ -169,7 +169,7 @@ namespace WCell.RealmServer.Commands
 			protected override void Initialize()
 			{
 				Init("Goto");
-				EnglishParamInfo = "<id>[ <starter index>[ <template index>]";
+				ParamInfo = "<id>[ <starter index>[ <template index>]";
 				EnglishDescription = "Teleports the target to the first starter of the given quest or the one at the given index.";
 			}
 
@@ -261,7 +261,7 @@ namespace WCell.RealmServer.Commands
 			protected override void Initialize()
 			{
 				Init("Lookup", "Find");
-				EnglishParamInfo = "<search terms>";
+				ParamInfo = "<search terms>";
 				EnglishDescription = "Lists all quests matching the given search term.";
 			}
 
@@ -283,7 +283,7 @@ namespace WCell.RealmServer.Commands
 				{
 					foreach (var templ in templates)
 					{
-						trigger.Reply(templ.ToString());
+						trigger.Reply(templ);
 					}
 				}
 			}
@@ -328,7 +328,7 @@ namespace WCell.RealmServer.Commands
 		protected override void Initialize()
 		{
 			Init("QuestSend", "SendQuest");
-			EnglishParamInfo = "";
+			ParamInfo = "";
 			EnglishDescription = "Provides a set of debug commands to send quest packets dynamically.";
 		}
 
@@ -344,7 +344,7 @@ namespace WCell.RealmServer.Commands
 			protected override void Initialize()
 			{
 				Init("Invalid");
-				EnglishParamInfo = "<reason>";
+				ParamInfo = "<reason>";
 				EnglishDescription = "Sends the SendQuestInvalid packet with the given reason";
 			}
 
@@ -365,7 +365,7 @@ namespace WCell.RealmServer.Commands
 			protected override void Initialize()
 			{
 				Init("PushResult");
-				EnglishParamInfo = "<reason>";
+				ParamInfo = "<reason>";
 				EnglishDescription = "Sends the SendQuestPushResult packet with the given reason, currently sends from triggering char";
 			}
 
@@ -386,7 +386,7 @@ namespace WCell.RealmServer.Commands
 			protected override void Initialize()
 			{
 				Init("GiverQuestDetails");
-				EnglishParamInfo = "<quest id>";
+				ParamInfo = "<quest id>";
 				EnglishDescription = "Sends the QuestGiverQuestDetails packet with the given quest id";
 			}
 
@@ -411,7 +411,7 @@ namespace WCell.RealmServer.Commands
 			protected override void Initialize()
 			{
 				Init("GiverQuestComplete");
-				EnglishParamInfo = "<quest id>";
+				ParamInfo = "<quest id>";
 				EnglishDescription = "Sends the QuestGiverQuestComplete packet with the given quest id";
 			}
 

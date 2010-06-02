@@ -8,8 +8,6 @@
 // </auto-generated>
 //------------------------------------------------------------------------------
 
-using System.Globalization;
-
 namespace WCell.Core.Localization {
     using System;
     

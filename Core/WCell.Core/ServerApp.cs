@@ -7,7 +7,7 @@ using System.Reflection;
 using System.Threading;
 using System.Threading.Tasks;
 using Cell.Core;
-using WCell.Util.Collections;
+using Cell.Core.Collections;
 using NLog;
 using WCell.Core.Database;
 using WCell.Core.Initialization;
@@ -50,8 +50,7 @@ namespace WCell.Core
 		protected List<IUpdatable> m_updatables;
 		protected LockfreeQueue<IMessage> m_messageQueue;
 
-		protected Task _updateTask;
-		protected int _currentUpdateThreadId;
+		protected int m_currentThreadId;
 		protected Stopwatch m_queueTimer;
 		protected long m_updateFrequency, m_lastUpdate;
 		protected TimerEntry m_shutdownTimer;
@@ -95,10 +94,10 @@ namespace WCell.Core
 			}
 		}
 
-		/// <summary>
-		/// Modify this to the Location of the file whose App-config you want to load.
-		/// This is needed specifically for tests, since they don't have an EntryAssembly
-		/// </summary>
+        /// <summary>
+        /// Modify this to the Location of the file whose App-config you want to load.
+        /// This is needed specifically for tests, since they don't have an EntryAssembly
+        /// </summary>
 		[NotVariable]
 		public static string EntryLocation
 		{
@@ -148,15 +147,9 @@ namespace WCell.Core
 			get { return _running; }
 			set
 			{
-				if (_running != value)
-				{
-					_running = value;
-					if (value)
-					{
-						// start message loop
-						_updateTask = Task.Factory.StartNewDelayed((int)m_updateFrequency, QueueUpdateCallback, this);
-					}
-				}
+				_running = value;
+                // start message loop
+                Task.Factory.StartNewDelayed((int)m_updateFrequency, QueueUpdateCallback, this);
 			}
 		}
 
@@ -242,22 +235,6 @@ namespace WCell.Core
 			AddMessage(() => m_updatables.Remove(updatable));
 		}
 
-
-		/// <summary>
-		/// Registers the given Updatable during the next Region Tick
-		/// </summary>
-		public void RegisterUpdatableLater(IUpdatable updatable)
-		{
-			m_messageQueue.Enqueue(new Message(() => RegisterUpdatable(updatable)));
-		}
-
-		/// <summary>
-		/// Unregisters the given Updatable during the next Region Update
-		/// </summary>
-		public void UnregisterUpdatableLater(IUpdatable updatable)
-		{
-			m_messageQueue.Enqueue(new Message(() => UnregisterUpdatable(updatable)));
-		}
 		#endregion
 
 		#region Task Pool
@@ -286,7 +263,7 @@ namespace WCell.Core
 
 		public void EnsureContext()
 		{
-			if (Thread.CurrentThread.ManagedThreadId != _currentUpdateThreadId)
+			if (Thread.CurrentThread.ManagedThreadId != m_currentThreadId)
 			{
 				throw new InvalidOperationException("Not in context");
 			}
@@ -297,7 +274,7 @@ namespace WCell.Core
 		/// </summary>
 		public bool IsInContext
 		{
-			get { return Thread.CurrentThread.ManagedThreadId == _currentUpdateThreadId; }
+			get { return Thread.CurrentThread.ManagedThreadId == m_currentThreadId; }
 		}
 
 		/// <summary>
@@ -316,152 +293,60 @@ namespace WCell.Core
 				return;
 			}
 
-			if (Interlocked.CompareExchange(ref _currentUpdateThreadId, Thread.CurrentThread.ManagedThreadId, 0) == 0)
+			m_currentThreadId = Thread.CurrentThread.ManagedThreadId;
+
+			// get the time at the start of our task processing
+			var timerStart = m_queueTimer.ElapsedMilliseconds;
+			var updateDt = (timerStart - m_lastUpdate) / 1000.0f;
+
+			// run timers!
+			foreach (var updatable in m_updatables)
 			{
-				// get the time at the start of our task processing
-				var timerStart = m_queueTimer.ElapsedMilliseconds;
-				var updateDt = (timerStart - m_lastUpdate) / 1000.0f;
-
-				// run timers!
-				foreach (var updatable in m_updatables)
+				try
 				{
-					try
-					{
-						updatable.Update(updateDt);
-					}
-					catch (Exception e)
-					{
-						LogUtil.ErrorException(e, "Failed to update: " + updatable);
-					}
+					updatable.Update(updateDt);
 				}
-
-				m_lastUpdate = m_queueTimer.ElapsedMilliseconds;
-
-				// process messages
-				IMessage msg;
-
-				while (m_messageQueue.TryDequeue(out msg))
+				catch (Exception e)
 				{
-					try
-					{
-						msg.Execute();
-					}
-					catch (Exception e)
-					{
-						LogUtil.ErrorException(e, "Failed to execute message: " + msg);
-					}
-					if (!_running)
-					{
-						return;
-					}
-				}
-
-				// get the end time
-				long timerStop = m_queueTimer.ElapsedMilliseconds;
-
-				bool updateLagged = timerStop - timerStart > m_updateFrequency;
-				long callbackTimeout = updateLagged ? 0 : ((timerStart + m_updateFrequency) - timerStop);
-
-				Interlocked.Exchange(ref _currentUpdateThreadId, 0);
-				if (_running)
-				{
-					// re-register the Update-callback
-					_updateTask = Task.Factory.StartNewDelayed((int)callbackTimeout, QueueUpdateCallback, this);
+					LogUtil.ErrorException(e, "Failed to update: " + updatable);
 				}
 			}
-		}
 
-		#region Waiting
-		/// <summary>
-		/// Ensures execution outside the Region-context.
-		/// </summary>
-		/// <exception cref="InvalidOperationException">thrown if the calling thread is the region thread</exception>
-		public void EnsureNoContext()
-		{
-			if (Thread.CurrentThread.ManagedThreadId == _currentUpdateThreadId)
+			m_lastUpdate = m_queueTimer.ElapsedMilliseconds;
+
+			// process messages
+			IMessage msg;
+
+			while (m_messageQueue.TryDequeue(out msg))
 			{
-				throw new InvalidOperationException(string.Format("Application Queue context prohibited."));
-			}
-		}
-
-		/// <summary>
-		/// Adds the given message to the region's message queue and does not return 
-		/// until the message is processed.
-		/// </summary>
-		/// <remarks>Make sure that the region is running before calling this method.</remarks>
-		/// <remarks>Must not be called from the region context.</remarks>
-		public void AddMessageAndWait(bool allowInstantExecution, Action action)
-		{
-			AddMessageAndWait(allowInstantExecution, new Message(action));
-		}
-
-		/// <summary>
-		/// Adds the given message to the region's message queue and does not return 
-		/// until the message is processed.
-		/// </summary>
-		/// <remarks>Make sure that the region is running before calling this method.</remarks>
-		/// <remarks>Must not be called from the region context.</remarks>
-		public void AddMessageAndWait(bool allowInstantExecution, IMessage msg)
-		{
-			if (allowInstantExecution && IsInContext)
-			{
-				msg.Execute();
-			}
-			else
-			{
-				EnsureNoContext();
-
-				// to ensure that we are not exiting in the current message-loop, add an updatable
-				// which again registers the message
-				var updatable = new SimpleUpdatable();
-				updatable.Callback = () => AddMessage(new Message(() =>
+				try
 				{
 					msg.Execute();
-					lock (msg)
-					{
-						Monitor.PulseAll(msg);
-					}
-					UnregisterUpdatable(updatable);
-				}));
-
-				lock (msg)
+				}
+				catch (Exception e)
 				{
-					RegisterUpdatableLater(updatable);
-					// int delay = this.GetWaitDelay();
-					Monitor.Wait(msg);
-					// Assert.IsTrue(added, string.Format(debugMsg, args));
+					LogUtil.ErrorException(e, "Failed to execute message: " + msg);
+				}
+				if (!_running)
+				{
+					return;
 				}
 			}
-		}
 
-		/// <summary>
-		/// Waits for one region tick before returning.
-		/// </summary>
-		/// <remarks>Must not be called from the region context.</remarks>
-		public void WaitOneTick()
-		{
-			AddMessageAndWait(false, new Message(() =>
+			// get the end time
+			long timerStop = m_queueTimer.ElapsedMilliseconds;
+
+			bool updateLagged = timerStop - timerStart > m_updateFrequency;
+			long callbackTimeout = updateLagged ? 0 : ((timerStart + m_updateFrequency) - timerStop);
+
+			m_currentThreadId = 0;
+			if (_running)
 			{
-				// do nothing
-			}));
-		}
-
-		/// <summary>
-		/// Waits for the given amount of ticks.
-		/// One tick might take 0 until Region.UpdateSpeed milliseconds.
-		/// </summary>
-		/// <remarks>Make sure that the region is running before calling this method.</remarks>
-		/// <remarks>Must not be called from the region context.</remarks>
-		public void WaitTicks(int ticks)
-		{
-			EnsureNoContext();
-
-			for (int i = 0; i < ticks; i++)
-			{
-				WaitOneTick();
+				// re-register the Update-callback
+			    Task.Factory.StartNewDelayed((int)callbackTimeout, QueueUpdateCallback, this);
 			}
 		}
-		#endregion
+
 		#endregion
 
 		#region Start
@@ -471,11 +356,6 @@ namespace WCell.Core
 		/// </summary>
 		public virtual void Start()
 		{
-			if (_running)
-			{
-				return;
-			}
-
 			if (InitMgr.PerformInitialization())
 			{
 				var address = Utility.ParseOrResolve(Host);
@@ -484,7 +364,7 @@ namespace WCell.Core
 
 				Start(true, false);
 
-				if (!(_running = TcpEnabledEnabled))
+				if (!(_running = _tcpEnabled))
 				{
 					s_log.Fatal(Resources.InitFailed);
 					Stop();
@@ -515,6 +395,7 @@ namespace WCell.Core
 		/// <param name="delayMillis">the time to wait before shutting down</param>
 		public virtual void ShutdownIn(uint delayMillis)
 		{
+			IsShuttingDown = true;
 			m_shutdownTimer = new TimerEntry(delayMillis / 1000f, 0f, upd =>
 			{
 				AppUtil.UnhookAll();
@@ -544,11 +425,6 @@ namespace WCell.Core
 
 		private void _OnShutdown()
 		{
-			if (IsShuttingDown)
-			{
-				return;
-			}
-
 			IsShuttingDown = true;
 
 			var evt = Shutdown;

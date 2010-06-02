@@ -1,5 +1,4 @@
 ﻿using System.IO;
-using WCell.RealmServer.Lang;
 using WCell.Util.Commands;
 using WCell.RealmServer.Addons;
 using WCell.Core.Addons;
@@ -11,7 +10,7 @@ namespace WCell.RealmServer.Commands
         protected override void Initialize()
         {
             Init("Addon");
-			EnglishDescription = "Provides commands for managing Addons";
+            EnglishDescription = "Provides commands for managing Addons";
         }
 
         public class ListAddonsCommand : SubCommand
@@ -19,7 +18,7 @@ namespace WCell.RealmServer.Commands
             protected override void Initialize()
             {
                 Init("List", "L");
-                EnglishParamInfo = "[-l]";
+                ParamInfo = "[-l]";
                 EnglishDescription = "Lists all active Addons. -l to also list libraries.";
             }
             public override void Process(CmdTrigger<RealmServerCmdArgs> trigger)
@@ -32,11 +31,11 @@ namespace WCell.RealmServer.Commands
                     ++i;
                     if (context.Addon != null)
                     {
-						trigger.Reply(i + ". " + trigger.Translate(LangKey.Addon) + " " + context.Addon);
+                        trigger.Reply(i + ". Addon " + context.Addon);
                     }
                     else if (lib)
                     {
-						trigger.Reply(i + ". " + trigger.Translate(LangKey.Library) + " " + context.Assembly);
+                        trigger.Reply(i + ". Library " + context.Assembly);
                     }
                 }
             }
@@ -48,11 +47,11 @@ namespace WCell.RealmServer.Commands
             protected override void Initialize()
             {
                 Init("Load");
-                EnglishParamInfo = "<Path>";
+                ParamInfo = "<Path>";
                 EnglishDescription = "Loads a new Addon from the given file.";
             }
 
-			public override void Process(CmdTrigger<RealmServerCmdArgs> trigger)
+            public override void Process(CmdTrigger<RealmServerCmdArgs> trigger)
             {
                 //var mod = trigger.Text.NextModifiers();
 

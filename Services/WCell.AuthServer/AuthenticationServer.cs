@@ -19,7 +19,7 @@ using System.Linq;
 using System.Net;
 using System.ServiceModel;
 using Cell.Core;
-using WCell.Util.Collections;
+using Cell.Core.Collections;
 using WCell.AuthServer.Accounts;
 using WCell.AuthServer.IPC;
 using WCell.AuthServer.Localization;
@@ -171,22 +171,6 @@ namespace WCell.AuthServer
 		public static RealmEntry GetRealmByName(string name)
 		{
 		    return m_realms.Values.Where(x => x.Name == name).FirstOrDefault();
-		}
-
-		/// <summary>
-		/// Returns the no'th Realm
-		/// </summary>
-		public static RealmEntry GetRealmByNumber(int no)
-		{
-			int i = 1;
-			foreach (var realm in Realms.Values)
-			{
-				if (i++ == no)
-				{
-					return realm;
-				}
-			}
-			return null;
 		}
 
 		/// <summary>
